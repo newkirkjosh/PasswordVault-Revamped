@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <com.google.android.maps.MapView
+    <com.readystatesoftware.maps.TapControlledMapView
         android:id="@+id/nku_map_view"
         android:layout_width="fill_parent"
         android:layout_height="250dp"

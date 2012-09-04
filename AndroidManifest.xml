@@ -138,6 +138,10 @@
 			android:name="org.research.chatclient.CreateAccountActivity"
 			android:label="@string/create_chat">
 		</activity>
+		<activity
+			android:name="org.research.chatclient.InboxActivity"
+			android:label="@string/create_chat">
+		</activity>
         <activity android:name=".ConversationActivity"
             android:windowSoftInputMode="adjustResize"></activity>
 		<receiver 
