@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal" >
+
+    <TextView  
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content" 
+	    android:text="@string/enter_your_username"
+	    android:padding="10dip" />
+    <EditText
+    	android:id="@+id/server_username"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content" 
+	    android:lines="1"
+		android:inputType="text|textNoSuggestions"
+		android:imeOptions="actionNext"
+		android:hint="@string/username_hint"	/>
+    <TextView  
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content" 
+	    android:text="@string/enter_your_password"
+	    android:padding="10dip" />
+    <EditText
+    	android:id="@+id/server_password"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content" 
+	    android:lines="1"
+		android:inputType="textPassword|textNoSuggestions"
+		android:imeOptions="actionNext"
+		android:hint="@string/password" />
+    <LinearLayout
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:gravity="center" >
+		<Button 
+			android:id="@+id/connect_button"
+			android:layout_width="100dp"
+			android:layout_height="60dp"
+			android:text="@string/connect"
+			android:padding="10dip" />
+		<Button 
+			android:id="@+id/clr_button"
+			android:layout_width="100dp"
+			android:layout_height="60dp"
+			android:text="@string/clear_button"
+			android:padding="10dip" />
+	</LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:id="@+id/popup_menu_root"
+   android:background="#FFFFFF"
+   android:orientation="vertical"
+   android:layout_width="wrap_content"
+   android:layout_height="20dip" >
+  <TextView android:id="@+id/popup_menu_delete"
+     android:text="Delete"
+     android:textColor="#000000"
+     android:layout_width="fill_parent"
+     android:layout_height="wrap_content" />
+  <TextView android:id="@+id/popup_menu_view"
+     android:text="View Details"
+     android:textColor="#000000"
+     android:layout_width="fill_parent"
+     android:layout_height="wrap_content" />
+ </LinearLayout>

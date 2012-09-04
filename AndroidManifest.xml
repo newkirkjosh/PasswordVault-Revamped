@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="org.research.chatclient"
+      android:versionCode="1"
+      android:versionName="1.0">
+    <uses-sdk android:minSdkVersion="11" />
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"/>
+    
+    <!-- Only this application can receive the messages and registration result --> 
+	<permission android:name="org.research.chatclient.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+	<uses-permission android:name="org.research.chatclient.permission.C2D_MESSAGE" />
+
+	<!-- This app has permission to register and receive message -->
+	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    
+    <application android:icon="@drawable/icon" android:label="@string/app_name">
+        
+        <uses-library android:name="com.google.android.maps" />
+        
+        <activity 
+        	android:name="org.research.thevault.CreatePass"
+			android:label="@string/app_name"
+			android:theme="@android:style/Theme.Dialog" >
+			<intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+		</activity>
+		<activity 
+            android:name="org.research.thevault.PasswordVault"
+            android:label="@string/app_name">
+        </activity>
+        <activity 
+            android:name="org.research.thevault.phoneactivities.DetailsActivity"
+            android:label="@string/app_name">
+        </activity>
+        <activity 
+            android:name="org.research.thevault.phoneactivities.AddPageActivity"
+            android:label="@string/app_name">
+        </activity>
+        <activity 
+            android:name="org.research.thevault.phoneactivities.GenPassActivity"
+            android:label="@string/app_name">
+        </activity>
+        <activity 
+            android:name="org.research.thevault.phoneactivities.OptionsActivity"
+            android:label="@string/app_name">
+        </activity>
+        <activity 
+            android:name="org.research.thevault.phoneactivities.ShowAppsActivity"
+            android:label="@string/app_name">
+        </activity>
+        <activity 
+            android:name="org.research.thevault.phoneactivities.ShowContactsActivity"
+            android:label="@string/app_name"
+            android:configChanges="orientation|screenSize|keyboard">
+        </activity>
+        <activity 
+        	android:name="org.research.thevault.HomeActivity"
+			android:label="@string/sites_title"
+			android:configChanges="orientation|screenSize|keyboard" >
+		</activity>
+		<activity 
+        	android:name="org.research.thevault.CreateFail"
+        	android:label="@string/fail_title"
+			android:theme="@android:style/Theme.Dialog" >
+		</activity>
+		<activity 
+        	android:name="org.research.thevault.About"
+        	android:label="@string/about_title"
+			android:theme="@android:style/Theme.Dialog" >
+		</activity>
+		<activity 
+        	android:name="org.research.thevault.BadPass"
+        	android:label="@string/bad_pass_title"
+			android:theme="@android:style/Theme.Dialog" >
+		</activity>
+		<activity 
+        	android:name="org.research.thevault.AddPage"
+        	android:label="@string/add_page_title" >
+		</activity>
+		<activity 
+        	android:name="org.research.thevault.Details"
+        	android:label="@string/details_title" >
+		</activity>
+		<activity
+		    android:name="org.research.thevault.maps.DisplayLocation"
+		    android:label="@string/display_location_title" >
+		</activity>
+		<activity 
+        	android:name="org.research.thevault.DisplayPassword"
+        	android:label="@string/display_password_title"
+			android:theme="@android:style/Theme.Dialog" >
+		</activity>
+		<activity 
+        	android:name="org.research.thevault.BadPageDetails"
+        	android:label="@string/bad_page_details"
+			android:theme="@android:style/Theme.Dialog" >
+		</activity>
+		<activity
+			android:name="org.research.thevault.GeneratePass"
+			android:label="@string/gen_pwd">
+		</activity>
+		<activity 
+		    android:name="org.research.thevault.maps.MapTracker"
+		    android:label="@string/app_name"
+		    android:theme="@android:style/Theme.Light.NoTitleBar">
+		</activity>
+		<activity
+			android:name="org.research.thevault.apps.ShowApps"
+			android:label="@string/gen_pwd">
+		</activity>
+		<activity
+			android:name="org.research.thevault.contacts.ShowContacts"
+			android:label="@string/gen_pwd">
+		</activity>
+		<activity 
+			android:name="org.research.thevault.maps.PassMapActivity"
+		    android:label="@string/gen_random_location">
+		</activity>
+		<activity 
+        	android:name="org.research.thevault.contacts.DisplayPerson"
+        	android:label="@string/bad_page_details"
+			android:theme="@android:style/Theme.Dialog" >
+		</activity>
+		<activity
+		    android:name="org.research.thevault.PassTaken"
+		    android:label="@string/pwd_stolen"
+		    android:theme="@android:style/Theme.Dialog" >
+		</activity>
+		<activity
+			android:name="org.research.chatclient.CreateAccountActivity"
+			android:label="@string/create_chat">
+		</activity>
+        <activity android:name=".ConversationActivity"
+            android:windowSoftInputMode="adjustResize"></activity>
+		<receiver 
+            android:name=".C2DMReceiver"
+			android:permission="com.google.android.c2dm.permission.SEND">
+          <!-- Receive the actual message -->
+          <intent-filter>
+              <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+              <category android:name="org.research.chatclient" />
+          </intent-filter>
+          <!-- Receive the registration id -->
+          <intent-filter>
+              <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+              <category android:name="org.research.chatclient" />
+          </intent-filter>
+      </receiver>
+		<activity android:name="BaseActivity"></activity>
+    </application>
+</manifest>
