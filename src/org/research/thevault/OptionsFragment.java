@@ -3,6 +3,7 @@ package org.research.thevault;
 import org.research.chatclient.R;
 import org.research.thevault.apps.ShowApps;
 import org.research.thevault.contacts.ShowContacts;
+import org.research.thevault.maps.DisplayLocationFragment;
 import org.research.thevault.phoneactivities.ShowAppsActivity;
 import org.research.thevault.phoneactivities.ShowContactsActivity;
 
@@ -69,7 +70,14 @@ public class OptionsFragment extends Fragment{
 					break;
 				// Locations
 				case 3:
-					
+					if(getResources().getBoolean(R.bool.IsTablet)){
+						frag = new DisplayLocationFragment();
+						ft.replace(R.id.right_frag, frag).commit();
+					}
+					else{
+						Intent intent = new Intent(getActivity(), ShowContactsActivity.class);
+						startActivity(intent);
+					}
 					break;
 				default:
 					break;

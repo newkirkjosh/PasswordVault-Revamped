@@ -90,7 +90,7 @@
         	android:label="@string/details_title" >
 		</activity>
 		<activity
-		    android:name="org.research.thevault.maps.DisplayLocation"
+		    android:name="org.research.thevault.maps.DisplayLocationFragment"
 		    android:label="@string/display_location_title" >
 		</activity>
 		<activity 
