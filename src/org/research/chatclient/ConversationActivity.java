@@ -113,8 +113,10 @@ public class ConversationActivity extends Fragment implements Constants{
 			View v = inflate.inflate(R.layout.sent_view, null, false);
 			TextView tv = (TextView) v.findViewById(R.id.sentText);
 			tv.setText(message);
-			LinearLayout wrapper = (LinearLayout)v.findViewById(R.id.convoLay);
+			LinearLayout wrapper = (LinearLayout)rootView.findViewById(R.id.convoLay);
 			wrapper.addView(v);
+			TextView placeText = (TextView) rootView.findViewById(R.id.placeHoldText);
+			placeText.setVisibility(View.GONE);
 			convoScroll.scrollBy(0, 50);
 			try{
 	    		HttpPost httppost = new HttpPost("http://devimiiphone1.nku.edu/research_chat_client/chat_client_server/send_message.php");

@@ -1,14 +1,26 @@
 package org.research.thevault.maps;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import mapviewballoons.example.simple.SimpleItemizedOverlay;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.research.chatclient.BaseActivity;
+import org.research.chatclient.CreateAccountActivity;
 import org.research.chatclient.R;
 
 import android.app.AlertDialog;
@@ -30,6 +42,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.widget.ListView;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -41,6 +54,8 @@ import com.readystatesoftware.maps.TapControlledMapView;
 
 public class PassMapActivity extends MapActivity implements LocationListener{
 
+	private SharedPreferences mPrefs;
+	private String mUsername;
 	private final String PREF_FILE = "location_info";
 	// private final String JSON_STRING = "json";
 	
@@ -60,6 +75,9 @@ public class PassMapActivity extends MapActivity implements LocationListener{
 		super.onCreate(savedInstanceState);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
+		mPrefs = getSharedPreferences( CreateAccountActivity.PREFS, Context.MODE_PRIVATE );
+		mUsername = mPrefs.getString( CreateAccountActivity.USER, "" ); 
+				
 		mLocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		
 		if( mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) 
@@ -361,6 +379,34 @@ public class PassMapActivity extends MapActivity implements LocationListener{
 
 	@Override
 	public void onLocationChanged(Location location) {
+		final String lat = "" + location.getLatitude();
+		final String lon = "" + location.getLongitude();
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try{
+					HttpClient httpclient = new DefaultHttpClient();
+		    		HttpPost httppost = new HttpPost("http://devimiiphone1.nku.edu/research_chat_client/password_vault_server/add_location.php");
+		    		LinkedList<NameValuePair> nameValuePairs = new LinkedList<NameValuePair>();
+		    		
+		    		nameValuePairs.add(new BasicNameValuePair("user", mUsername));
+		    		nameValuePairs.add(new BasicNameValuePair("lat", lat));
+		    		nameValuePairs.add(new BasicNameValuePair("lon", lon));
+		    		
+		    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+		    		HttpResponse response = httpclient.execute(httppost);
+		    	}catch(UnsupportedEncodingException e){
+		    		e.printStackTrace();
+		    	} catch (ClientProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
 		makeUseOfLocation(location);
 		
 	}

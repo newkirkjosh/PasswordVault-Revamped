@@ -3,7 +3,8 @@
     android:id="@+id/rootLay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@drawable/android_corner" >
     <Spinner
         android:id="@+id/personSpin"
         android:layout_width="match_parent"
