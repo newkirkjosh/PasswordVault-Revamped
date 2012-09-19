@@ -53,7 +53,6 @@
 	<string name="enter_your_password">"Enter your password: "</string>
 	<string name="connect">Connect</string>
 	<string name="username_text">Type in a new username:</string>
-    <string name="username_hint">Username</string>
     <string name="confirm_new_account">Confrim New Account</string>
     <string name="create_login">Create Login</string>
     <string name="inbox_title">All Messages</string>
