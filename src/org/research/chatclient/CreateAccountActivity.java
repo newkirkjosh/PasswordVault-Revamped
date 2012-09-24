@@ -147,7 +147,7 @@ public class CreateAccountActivity extends Activity {
 	    		 editor.putBoolean(CREATED, true);
 	    		 editor.putString(USER, username);
 	    		 editor.commit();
-	    		 Intent inboxIntent = new Intent(CreateAccountActivity.this, InboxActivity.class);
+	    		 Intent inboxIntent = new Intent(CreateAccountActivity.this, BaseActivity.class);
 	    		 startActivity(inboxIntent);
 	    		 finish();
 	    	 }

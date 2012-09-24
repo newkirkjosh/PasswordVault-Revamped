@@ -396,6 +396,7 @@ public class PassMapActivity extends MapActivity implements LocationListener{
 		    		
 		    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 		    		HttpResponse response = httpclient.execute(httppost);
+		    		Log.d("RES", "fail? " + response.getEntity().toString());
 		    	}catch(UnsupportedEncodingException e){
 		    		e.printStackTrace();
 		    	} catch (ClientProtocolException e) {

@@ -4,6 +4,7 @@ import org.research.chatclient.R;
 import org.research.thevault.apps.ShowApps;
 import org.research.thevault.contacts.ShowContacts;
 import org.research.thevault.maps.DisplayLocationFragment;
+import org.research.thevault.maps.TrackMapActivity;
 import org.research.thevault.phoneactivities.ShowAppsActivity;
 import org.research.thevault.phoneactivities.ShowContactsActivity;
 
@@ -66,7 +67,8 @@ public class OptionsFragment extends Fragment{
 					break;
 				// Tracking
 				case 2:
-					
+					Intent mapIntent = new Intent(getActivity(), TrackMapActivity.class);
+					startActivity(mapIntent);
 					break;
 				// Locations
 				case 3:

@@ -143,7 +143,11 @@
 			android:label="@string/create_chat">
 		</activity>
         <activity android:name=".ConversationActivity"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
+		    android:name="org.research.thevault.maps.TrackMapActivity"
+		    android:label="@string/display_location_title" >
+		</activity>
 		<receiver 
             android:name=".C2DMReceiver"
 			android:permission="com.google.android.c2dm.permission.SEND">
