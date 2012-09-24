@@ -22,8 +22,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.research.thevault.Details;
-import org.research.thevault.phoneactivities.DetailsActivity;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -69,11 +67,15 @@ public class BaseActivity extends Activity implements Constants{
 	private ListView lv;
 	private ProgressDialog mProgress;
 	private String convo;
+	public static boolean HDMI_ACTIVE = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.base_layout);
+		if(!getResources().getBoolean(R.bool.IsTablet) && HDMI_ACTIVE)
+			setContentView(R.layout.base_layout_hdmi);
+		else
+			setContentView(R.layout.base_layout);
 		MessagesTable table = new MessagesTable(BaseActivity.this);
 		db = table.getWritableDatabase();
 		

@@ -75,29 +75,6 @@ public class SitesList extends MyFragment implements Constants{
 	    super.onDestroy();
 	}
 
-	@Override
-    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater ){
-    	super.onCreateOptionsMenu( menu, null );
-    	inflater.inflate( R.menu.menu, menu);
-    }
-
-    @Override
-    // This method is when the long click is pressed, determines which action to take based on the MenuItem selected
-    public boolean onOptionsItemSelected( MenuItem item ){
-    	switch( item.getItemId() ){
-    	case R.id.add:
-    		addSite();
-    		return true;
-    	case R.id.gen_pwd:
-            genPass();
-            return true;
-    	case R.id.location:
-    		getGeneratedLocation();
-    		return true;
-    	}
-    	return false;
-    }
-    
     public Cursor getSites(){
     	db = st.getReadableDatabase();
 		cursor = db.rawQuery( "SELECT * FROM " + SITE_TABLE_NAME, null);
@@ -114,6 +91,7 @@ public class SitesList extends MyFragment implements Constants{
 		lv.setAdapter( adapter );
     }
     
+    // This method is when the long click is pressed, determines which action to take based on the MenuItem selected
     @Override 
     public boolean onContextItemSelected(MenuItem item) { 
     	if( item.getItemId() == 0 || item.getItemId() == 1 ){

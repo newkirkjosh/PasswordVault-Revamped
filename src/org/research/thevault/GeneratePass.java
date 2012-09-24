@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.research.chatclient.BaseActivity;
 import org.research.chatclient.R;
 import org.research.thevault.phoneactivities.OptionsActivity;
 
@@ -124,7 +125,7 @@ public class GeneratePass extends MyFragment{
     public void genPassword(){
     	
     	if( password.getText().toString().toLowerCase().equals("options") ){
-    		if(getResources().getBoolean(R.bool.IsTablet)){
+    		if(getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE){
 	    		FragmentManager fm = getFragmentManager();
 	    		FragmentTransaction ft = fm.beginTransaction();
 	    		Fragment options = new OptionsFragment();

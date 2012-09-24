@@ -1,5 +1,6 @@
 package org.research.thevault;
 
+import org.research.chatclient.BaseActivity;
 import org.research.chatclient.R;
 import org.research.thevault.apps.ShowApps;
 import org.research.thevault.contacts.ShowContacts;
@@ -7,6 +8,7 @@ import org.research.thevault.maps.DisplayLocationFragment;
 import org.research.thevault.maps.TrackMapActivity;
 import org.research.thevault.phoneactivities.ShowAppsActivity;
 import org.research.thevault.phoneactivities.ShowContactsActivity;
+import org.research.thevault.phoneactivities.ShowLocationsActivity;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -45,7 +47,7 @@ public class OptionsFragment extends Fragment{
 				switch (position) {
 				// Apps
 				case 0:
-					if(getResources().getBoolean(R.bool.IsTablet)){
+					if(getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE){
 						frag = new ShowApps();
 			    		ft.replace(R.id.right_frag, frag).commit();
 		    		}
@@ -56,7 +58,7 @@ public class OptionsFragment extends Fragment{
 					break;
 				// Contacts
 				case 1:
-					if(getResources().getBoolean(R.bool.IsTablet)){
+					if(getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE){
 						frag = new ShowContacts();
 						ft.replace(R.id.right_frag, frag).commit();
 					}
@@ -72,12 +74,12 @@ public class OptionsFragment extends Fragment{
 					break;
 				// Locations
 				case 3:
-					if(getResources().getBoolean(R.bool.IsTablet)){
+					if(getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE){
 						frag = new DisplayLocationFragment();
 						ft.replace(R.id.right_frag, frag).commit();
 					}
 					else{
-						Intent intent = new Intent(getActivity(), ShowContactsActivity.class);
+						Intent intent = new Intent(getActivity(), ShowLocationsActivity.class);
 						startActivity(intent);
 					}
 					break;
