@@ -58,22 +58,22 @@
 	android:gravity="center" >
 		<Button 
 			android:id="@+id/add_button"
-			android:layout_width="100dp"
-			android:layout_height="60dp"
+			android:layout_width="125dp"
+			android:layout_height="70dp"
 			android:text="@string/add_button"
 			android:padding="10dip"
 		/>
 		<Button 
 			android:id="@+id/gen_button"
-			android:layout_width="100dp"
-			android:layout_height="60dp"
+			android:layout_width="125dp"
+			android:layout_height="70dp"
 			android:text="@string/gen_pwd"
 			android:padding="10dip"
 		/>
 		<Button 
 			android:id="@+id/clr_button"
-			android:layout_width="100dp"
-			android:layout_height="60dp"
+			android:layout_width="125dp"
+			android:layout_height="70dp"
 			android:text="@string/clear_button"
 			android:padding="10dip"
 		/>

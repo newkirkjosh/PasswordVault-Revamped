@@ -47,7 +47,7 @@ public class HomeActivity extends Activity {
 			ft.replace(android.R.id.content, listFrag).commit();
 		}
 		ab = getActionBar();
-		ab.setDisplayHomeAsUpEnabled(false);
+		ab.setDisplayHomeAsUpEnabled(true);
 	}
 
 	public void startRightFrag(Bundle site) {
@@ -58,7 +58,6 @@ public class HomeActivity extends Activity {
 			mSiteFrag.setArguments(site);
 			FragmentTransaction ft = fm.beginTransaction();
 			ft.replace(R.id.right_frag, mSiteFrag).commit();
-			ab.setDisplayHomeAsUpEnabled(true);
 		} else {
 			Intent intent = new Intent(this, DetailsActivity.class);
 			intent.putExtra("BUNDLE", site);
@@ -81,11 +80,7 @@ public class HomeActivity extends Activity {
 		FragmentTransaction ft;
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			if (fm.findFragmentById(R.id.right_frag) instanceof ListFragment) {
-				ft = fm.beginTransaction();
-				ft.replace(R.id.list_frag, new SitesList())
-						.remove(fm.findFragmentById(R.id.right_frag)).commit();
-			}
+			finish();
 			return true;
 		case R.id.add:
 			mSiteFrag = new AddPage();

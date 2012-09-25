@@ -29,11 +29,13 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ToggleButton;
 
 import com.google.android.maps.MapActivity;
 
@@ -42,12 +44,13 @@ public class TrackMapActivity extends MapActivity {
 	private ListView lv;
 	private ProgressDialog mProgress;
 	private JSONArray mUsers;
-	private SharedPreferences mPrefs;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout.track_map);
+		
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		lv = (ListView) findViewById(R.id.trackedList);
 		View listHeader = (View) getLayoutInflater().inflate(R.layout.list_header, null, false);
 		Button doneBtn = (Button) listHeader.findViewById(R.id.listHeaderBtn);
@@ -86,8 +89,6 @@ public class TrackMapActivity extends MapActivity {
 		mProgress.setMessage("Getting Tracked Users...");
 		mProgress.show();
 
-		mPrefs = getSharedPreferences(CreateAccountActivity.PREFS, Context.MODE_PRIVATE);
-
 		new GetPeopleTask().execute(new HttpGet("http://devimiiphone1.nku.edu/research_chat_client/password_vault_server/get_tracked_users.php"));
 
 	}
@@ -96,6 +97,40 @@ public class TrackMapActivity extends MapActivity {
 	protected boolean isRouteDisplayed() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()){
+		case android.R.id.home:
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	private class TrackedUser{
+		private String name;
+		private boolean checked;
+		
+		public TrackedUser(String name){
+			this.name = name;
+			checked = false;
+		}
+		
+		public void toggleChecked(){
+			checked = !checked;
+		}
+		
+		public boolean isChecked(){
+			return checked;
+		}
+		
+		@Override
+		public String toString(){
+			return name;
+		}
+		
 	}
 
 	private class GetPeopleTask extends AsyncTask<HttpGet, Void, InputStream> {
@@ -138,10 +173,10 @@ public class TrackMapActivity extends MapActivity {
 			try {
 				Log.d("RES", "RES: " + text);
 				mUsers = new JSONArray(text);
-				String[] users = new String[mUsers.length()];
+				TrackedUser[] users = new TrackedUser[mUsers.length()];
 				for (int i = 0; i < mUsers.length(); i++)
-					users[i] = mUsers.getString(i);
-				ArrayAdapter<String> adapter = new ArrayAdapter<String>(TrackMapActivity.this, android.R.layout.simple_list_item_1, users);
+					users[i] = new TrackedUser(mUsers.getString(i));
+				ArrayAdapter<TrackedUser> adapter = new ArrayAdapter<TrackedUser>(TrackMapActivity.this, android.R.layout.simple_list_item_1, users);
 				adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				lv.setAdapter(adapter);
 			} catch (JSONException e) {

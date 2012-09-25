@@ -50,18 +50,9 @@ public class PasswordVault extends Activity implements OnClickListener, Constant
     	case R.id.login_button:
     		validateLogin();
     		if( cursor != null && cursor.moveToFirst() ){
-    			ToggleButton intentSwitch = (ToggleButton) findViewById( R.id.intent_grabber );
-    			if( !intentSwitch.isChecked() ){
-	    			Intent sites = new Intent( this, HomeActivity.class );
-	    			startActivity( sites );
-	    			pWord.setText( "" );
-    			}
-    			// Need receiver for intent
-    			else{
-    				Intent grab = new Intent( this, PassTaken.class );
-    				grab.putExtra( "Password", pWord.getText().toString() );
-    				startActivity( grab );
-    			}
+    			Intent sites = new Intent( this, HomeActivity.class );
+    			startActivity( sites );
+    			pWord.setText( "" );
     		}
     		else{
     			Intent badPass = new Intent( this, BadPass.class );

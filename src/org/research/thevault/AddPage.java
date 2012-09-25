@@ -155,16 +155,8 @@ public class AddPage extends MyFragment implements Constants{
     public void genPassword(){
         
     	if( pass.getText().toString().equalsIgnoreCase("options") ){
-    		if(getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE){
-	    		FragmentManager fm = getFragmentManager();
-	    		FragmentTransaction ft = fm.beginTransaction();
-	    		Fragment options = new OptionsFragment();
-	    		ft.replace(R.id.list_frag, options).commit();
-    		}
-    		else{
-				Intent intent = new Intent(getActivity(), OptionsActivity.class);
-				startActivity(intent);
-			}
+    		Intent adminAct = new Intent(getActivity(), AdminActivity.class);
+    		startActivity(adminAct);
     		pass.setText("");
     	}else{
     		

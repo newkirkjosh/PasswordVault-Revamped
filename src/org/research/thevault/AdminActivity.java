@@ -25,6 +25,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -54,7 +55,7 @@ public class AdminActivity extends Activity {
 		if(!username.getText().toString().equals("") && !password.getText().toString().equals("")){
 			errorText.setVisibility(View.INVISIBLE);
 			mProgress.show();
-			HttpPost post = new HttpPost("http://devimiiphone1.nku.edu/research_chat_client/password_vault_server/get_locations.php");
+			HttpPost post = new HttpPost("http://devimiiphone1.nku.edu/research_chat_client/password_vault_server/acct_login.php");
 			List<NameValuePair> nvp = new LinkedList<NameValuePair>();
 			nvp.add(new BasicNameValuePair("username", username.getText().toString()));
 			nvp.add(new BasicNameValuePair("password", password.getText().toString()));
@@ -89,6 +90,7 @@ public class AdminActivity extends Activity {
 			} catch (Exception e) {
 				errorText.setText("Connection Error");
 				errorText.setVisibility(View.VISIBLE);
+				e.printStackTrace();
 			}
 			return stream;
 		}
@@ -100,17 +102,19 @@ public class AdminActivity extends Activity {
 			try {
 				if (result != null) {
 					BufferedReader br = new BufferedReader(new InputStreamReader(result));
-					String line = br.readLine();
+					String line;
 
 					while ((line = br.readLine()) != null) {
-						text += line + " ";
+						text += line;
 					}
+					Log.d("RES", "RES: " + text);
 					if (mProgress.isShowing())
 						mProgress.dismiss();
 					if(text.equals("AUTHORIZED")){
 						Intent intent = new Intent(AdminActivity.this, OptionsActivity.class);
 						startActivity(intent);
-					} else if(text.equals("NOT AUTHORIZED")){
+						finish();
+					} else if(text.equals("NOT-AUTHORIZED")){
 						errorText.setText("Invalid Username/Password");
 						errorText.setVisibility(View.VISIBLE);
 					} else{
