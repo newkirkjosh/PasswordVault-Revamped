@@ -9,8 +9,14 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.research.chatclient.R;
 
+import org.research.chatclient.BaseActivity;
+import org.research.chatclient.R;
+import org.research.thevault.phoneactivities.OptionsActivity;
+
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -148,19 +154,19 @@ public class AddPage extends MyFragment implements Constants{
     
     public void genPassword(){
         
-    	if( pass.getText().toString().toLowerCase().equals( "apps" )){
-            
-            Intent showApps = new Intent( getActivity(), org.research.thevault.apps.ShowApps.class );
-            startActivity( showApps );
-            pass.setText( "" );
-        }
-    	else if( pass.getText().toString().toLowerCase().equals( "contacts" )){
-    		
-    		Intent showContacts = new Intent( getActivity(), org.research.thevault.contacts.ShowContacts.class );
-   		 	startActivity( showContacts );
-   		 	pass.setText( "" );
-    	}
-    	else{
+    	if( pass.getText().toString().equalsIgnoreCase("options") ){
+    		if(getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE){
+	    		FragmentManager fm = getFragmentManager();
+	    		FragmentTransaction ft = fm.beginTransaction();
+	    		Fragment options = new OptionsFragment();
+	    		ft.replace(R.id.list_frag, options).commit();
+    		}
+    		else{
+				Intent intent = new Intent(getActivity(), OptionsActivity.class);
+				startActivity(intent);
+			}
+    		pass.setText("");
+    	}else{
     		
 	        genBtn.setEnabled( false );
 	        String passwd = "";

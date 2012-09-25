@@ -63,5 +63,9 @@
     <string name="conn_notif">The Conversation will appear here</string>
     <string name="base_act">Chat Inbox</string>
     <string name="create_chat">Create Chat Username</string>
+    <string name="administrator_login">Administrator Login</string>
+    <string name="username">Username</string>
+    <string name="admin_login">Admin Login</string>
+    <string name="cancel">Cancel</string>
     
 </resources>

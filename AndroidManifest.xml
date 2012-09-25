@@ -140,6 +140,11 @@
 		    android:theme="@android:style/Theme.Dialog" >
 		</activity>
 		<activity
+		    android:name="org.research.thevault.AdminActivity"
+		    android:label="@string/admin_login"
+		    android:theme="@android:style/Theme.Dialog" >
+		</activity>
+		<activity
 			android:name="org.research.chatclient.CreateAccountActivity"
 			android:label="@string/create_chat">
 		</activity>

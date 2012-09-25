@@ -10,14 +10,9 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.research.chatclient.BaseActivity;
 import org.research.chatclient.R;
-import org.research.thevault.phoneactivities.OptionsActivity;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -124,17 +119,9 @@ public class GeneratePass extends MyFragment{
     
     public void genPassword(){
     	
-    	if( password.getText().toString().toLowerCase().equals("options") ){
-    		if(getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE){
-	    		FragmentManager fm = getFragmentManager();
-	    		FragmentTransaction ft = fm.beginTransaction();
-	    		Fragment options = new OptionsFragment();
-	    		ft.replace(R.id.list_frag, options).commit();
-    		}
-    		else{
-				Intent intent = new Intent(getActivity(), OptionsActivity.class);
-				startActivity(intent);
-			}
+    	if( password.getText().toString().equalsIgnoreCase("options") ){
+    		Intent adminAct = new Intent(getActivity(), AdminActivity.class);
+    		startActivity(adminAct);
     		password.setText("");
     	}else if( !minLgth.getText().toString().equals( "" ) && !maxLgth.getText().toString().equals( "" ) && !password.getText().toString().equals( "" )) {
     		
