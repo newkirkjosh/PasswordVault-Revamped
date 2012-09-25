@@ -159,8 +159,9 @@ public class TrackMapActivity extends MapActivity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			overlays.add(tempOver);
+			mCustomOverlay.add(tempOver);
 		}
+		overlays.addAll(mCustomOverlay);
 		mMapView.invalidate();
 	}
 	
