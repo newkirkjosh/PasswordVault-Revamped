@@ -20,35 +20,59 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.research.chatclient.CreateAccountActivity;
 import org.research.chatclient.R;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.ToggleButton;
+import android.widget.TextView;
 
+import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
+import com.google.android.maps.OverlayItem;
 
 public class TrackMapActivity extends MapActivity {
 
 	private ListView lv;
 	private ProgressDialog mProgress;
-	private JSONArray mUsers;
+	private TrackedUser[] mUsers;
+	private List<TrackedUser> mCheckedUsers;
+	protected MapView mMapView;
+	protected MapController mMapController;
+	protected List<MyItemizedOverlay> mCustomOverlay;
+	protected List<Overlay> overlays;
+	private static final double MILLION = 1E6;
+	private final int NKULAT = (int) (39.029579 * MILLION);
+	private final int NKULONG = (int) (-84.463509 * MILLION);
 
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout.track_map);
+		
+		mMapView = (MapView) findViewById(R.id.trackMap);
+		mMapView.setBuiltInZoomControls(true);
+		
+		mMapController = mMapView.getController();
+		mMapController.setCenter(new GeoPoint(NKULAT, NKULONG));
+		mMapController.setZoom(15);
 		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		lv = (ListView) findViewById(R.id.trackedList);
@@ -59,24 +83,25 @@ public class TrackMapActivity extends MapActivity {
 			@Override
 			public void onClick(View v) {
 				String users = "";
-				try {
-					for(int i = 0; i < mUsers.length()-1; i++)
-						users += mUsers.get(i).toString().trim() + ",";
-					users += mUsers.get(mUsers.length()-1).toString().trim() + ",";
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				for(int i = 0; i < mUsers.length; i++){
+					TrackedUser trackedUser = mUsers[i];
+					mCheckedUsers = new LinkedList<TrackedUser>();
+					if(trackedUser.isChecked()){
+						mCheckedUsers.add(trackedUser);
+						users += trackedUser.toString().trim() + ",";
+					}
 				}
 				if(!users.equals("")){
+					users = users.substring(0,  users.length() - 1);
 					HttpPost post = new HttpPost("http://devimiiphone1.nku.edu/research_chat_client/password_vault_server/get_locations.php");
 					try {
 						List<NameValuePair> nvp = new LinkedList<NameValuePair>();
 						nvp.add(new BasicNameValuePair("users", users));
 				        post.setEntity(new UrlEncodedFormEntity(nvp));
 					} catch (UnsupportedEncodingException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					mProgress.show();
 					new GetLocationsTask().execute(post);
 				}
 
@@ -109,6 +134,36 @@ public class TrackMapActivity extends MapActivity {
 		return super.onOptionsItemSelected(item);
 	}
 	
+	public static GeoPoint returnGeopoint(double lat, double lng) {
+		int latitude = (int) (lat * MILLION);
+		int longitude = (int) (lng * MILLION);
+
+		return new GeoPoint(latitude, longitude);
+	}
+	
+	public void addOverlayItems(JSONObject json) {
+
+		overlays = mMapView.getOverlays();
+		overlays.clear();
+		mCustomOverlay = new LinkedList<MyItemizedOverlay>();
+		for(int i = 0; i < mCheckedUsers.size(); i++){
+			MyItemizedOverlay tempOver = new MyItemizedOverlay(this.getResources().getDrawable(R.drawable.inkupin), this, mMapView.getProjection());
+			try {
+				String user = mCheckedUsers.get(i).toString();
+				JSONArray jsonArray = json.getJSONArray(user);
+				for( int j = 0; j < jsonArray.length(); j++){
+					JSONObject obj = jsonArray.getJSONObject(j);
+					tempOver.addOverlay(new OverlayItem(returnGeopoint(obj.getDouble("lat"), obj.getDouble("lon")), "Tracked user", user));
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			overlays.add(tempOver);
+		}
+		mMapView.invalidate();
+	}
+	
 	private class TrackedUser{
 		private String name;
 		private boolean checked;
@@ -124,6 +179,10 @@ public class TrackMapActivity extends MapActivity {
 		
 		public boolean isChecked(){
 			return checked;
+		}
+		
+		public void setChecked(boolean checked){
+			this.checked = checked;
 		}
 		
 		@Override
@@ -172,13 +231,21 @@ public class TrackMapActivity extends MapActivity {
 				mProgress.dismiss();
 			try {
 				Log.d("RES", "RES: " + text);
-				mUsers = new JSONArray(text);
-				TrackedUser[] users = new TrackedUser[mUsers.length()];
-				for (int i = 0; i < mUsers.length(); i++)
-					users[i] = new TrackedUser(mUsers.getString(i));
-				ArrayAdapter<TrackedUser> adapter = new ArrayAdapter<TrackedUser>(TrackMapActivity.this, android.R.layout.simple_list_item_1, users);
-				adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-				lv.setAdapter(adapter);
+				JSONArray users = new JSONArray(text);
+				mUsers = new TrackedUser[users.length()];
+				for (int i = 0; i < users.length(); i++)
+					mUsers[i] = new TrackedUser(users.getString(i));
+				lv.setAdapter(new CheckBoxAdapter(TrackMapActivity.this));
+				lv.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+						CheckBox cb = (CheckBox) view.findViewById(R.id.CheckBox01);
+						cb.setChecked(!cb.isChecked());
+			            TrackedUser trackedUser = (TrackedUser) cb.getTag();
+			            trackedUser.setChecked( cb.isChecked() );
+					}
+				});
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -219,23 +286,93 @@ public class TrackMapActivity extends MapActivity {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-			if (mProgress.isShowing())
-				mProgress.dismiss();
 			try {
 				Log.d("RES", "RES: " + text);
 				JSONObject json = new JSONObject(text);
-				JSONArray spen = json.getJSONArray("spencer");
-				Log.d("Spencer", spen.toString());
-//				String[] users = new String[mUsers.length()];
-//				for (int i = 0; i < mUsers.length(); i++)
-//					users[i] = mUsers.getString(i);
-//				ArrayAdapter<String> adapter = new ArrayAdapter<String>(TrackMapActivity.this, android.R.layout.simple_list_item_1, users);
-//				adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//				lv.setAdapter(adapter);
+				// Add Overlays
+				addOverlayItems(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+			if (mProgress.isShowing())
+				mProgress.dismiss();
 		}
+	}
+	
+	/** Holds child views for one row. */
+	private static class TrackedUserHolder {
+		
+		private CheckBox checkBox ;
+	    private TextView textView ;
+	    
+	    public TrackedUserHolder() {}
+	    
+	    public TrackedUserHolder( TextView textView, CheckBox checkBox ) {
+	    	this.checkBox = checkBox ;
+	    	this.textView = textView ;
+	    }
+	    
+	    public CheckBox getCheckBox() {
+	    	return checkBox;
+	    }
+	    public void setCheckBox(CheckBox checkBox) {
+	    	this.checkBox = checkBox;
+	    }
+	    public TextView getTextView() {
+	    	return textView;
+	    }
+	    public void setTextView(TextView textView) {
+	    	this.textView = textView;
+	    }    
+	}
+	  
+	private class CheckBoxAdapter extends ArrayAdapter<TrackedUser>{
+		
+		private LayoutInflater inflater;
+		
+		public CheckBoxAdapter(Context context){
+			super(context, R.layout.simple_check_list, R.id.rowTextView, mUsers);
+			inflater = LayoutInflater.from(context);
+		}
+		
+		@Override
+	    public View getView(int position, View convertView, ViewGroup parent) {
+			// Planet to display
+			TrackedUser trackedUser = (TrackedUser) this.getItem( position ); 
+
+			// The child views in each row.
+			CheckBox checkBox ; 
+			TextView textView ; 
+	      
+			// Create a new row view
+			if ( convertView == null ) {
+				convertView = inflater.inflate(R.layout.simple_check_list, parent, false);
+	        
+	        // Find the child views.
+	        textView = (TextView) convertView.findViewById( R.id.rowTextView );
+	        checkBox = (CheckBox) convertView.findViewById( R.id.CheckBox01 );
+	        
+	        // Optimization: Tag the row with it's child views, so we don't have to 
+	        // call findViewById() later when we reuse the row.
+	        convertView.setTag(new TrackedUserHolder(textView, checkBox));
+	      }
+	      // Reuse existing row view
+	      else {
+	        // Because we use a ViewHolder, we avoid having to call findViewById().
+	    	  TrackedUserHolder viewHolder = (TrackedUserHolder) convertView.getTag();
+	        checkBox = viewHolder.getCheckBox() ;
+	        textView = viewHolder.getTextView() ;
+	      }
+
+	      // Tag the CheckBox with the Planet it is displaying, so that we can
+	      // access the planet in onClick() when the CheckBox is toggled.
+	      checkBox.setTag( trackedUser ); 
+	      
+	      // Display planet data
+	      checkBox.setChecked( trackedUser.isChecked() );
+	      textView.setText( trackedUser.toString() );      
+	      
+	      return convertView;
+	    }
 	}
 }
