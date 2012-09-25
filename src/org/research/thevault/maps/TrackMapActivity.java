@@ -83,9 +83,9 @@ public class TrackMapActivity extends MapActivity {
 			@Override
 			public void onClick(View v) {
 				String users = "";
+				mCheckedUsers = new LinkedList<TrackedUser>();
 				for(int i = 0; i < mUsers.length; i++){
 					TrackedUser trackedUser = mUsers[i];
-					mCheckedUsers = new LinkedList<TrackedUser>();
 					if(trackedUser.isChecked()){
 						mCheckedUsers.add(trackedUser);
 						users += trackedUser.toString().trim() + ",";
@@ -146,11 +146,14 @@ public class TrackMapActivity extends MapActivity {
 		overlays = mMapView.getOverlays();
 		overlays.clear();
 		mCustomOverlay = new LinkedList<MyItemizedOverlay>();
+		Log.wtf("SIZE", mCheckedUsers.size() + "");
 		for(int i = 0; i < mCheckedUsers.size(); i++){
 			MyItemizedOverlay tempOver = new MyItemizedOverlay(this.getResources().getDrawable(R.drawable.inkupin), this, mMapView.getProjection());
 			try {
 				String user = mCheckedUsers.get(i).toString();
 				JSONArray jsonArray = json.getJSONArray(user);
+				Log.d("USER", user);
+				Log.d("JSONAR", jsonArray.toString());
 				for( int j = 0; j < jsonArray.length(); j++){
 					JSONObject obj = jsonArray.getJSONObject(j);
 					tempOver.addOverlay(new OverlayItem(returnGeopoint(obj.getDouble("lat"), obj.getDouble("lon")), "Tracked user", user));
