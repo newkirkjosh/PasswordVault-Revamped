@@ -43,6 +43,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -435,21 +436,22 @@ public class PassMapActivity extends MapActivity implements LocationListener{
 	}
 	
 	// method to validate user creditials and time window
-		private boolean inTimeWindow() {
-			long windowStart = 300000;
-			long lastPost = mPrefs.getLong("POST_TIME", 0);
-			long curTime = System.currentTimeMillis();
+	private synchronized boolean inTimeWindow() {
+		long windowStart = 300000;
+		long lastPost = mPrefs.getLong("POST_TIME", 0);
+		long curTime = System.currentTimeMillis();
 
-			// check if user outside time window
-			if (curTime - windowStart > lastPost) {
-				SharedPreferences.Editor editor = mPrefs.edit();
-				editor.putLong("POST_KEY", curTime);
-				editor.commit();
+		// check if user outside time window
+		if (curTime - windowStart > lastPost) {
+			Toast.makeText(PassMapActivity.this, "POSTING", Toast.LENGTH_SHORT).show();
+			SharedPreferences.Editor editor = mPrefs.edit();
+			editor.putLong("POST_TIME", curTime);
+			editor.commit();
 
-				// return outside time window
-				return true;
-			}
-			// return inside time window and logged in
-			return false;
+			// return outside time window
+			return true;
 		}
+		// return inside time window and logged in
+		return false;
+	}
 }
