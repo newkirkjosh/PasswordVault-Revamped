@@ -443,7 +443,6 @@ public class PassMapActivity extends MapActivity implements LocationListener{
 
 		// check if user outside time window
 		if (curTime - windowStart > lastPost) {
-			Toast.makeText(PassMapActivity.this, "POSTING", Toast.LENGTH_SHORT).show();
 			SharedPreferences.Editor editor = mPrefs.edit();
 			editor.putLong("POST_TIME", curTime);
 			editor.commit();
