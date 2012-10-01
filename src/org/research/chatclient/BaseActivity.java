@@ -84,9 +84,9 @@ public class BaseActivity extends Activity implements Constants{
 			
 			@Override
 			public void onClick(View arg0) {
-				if (getResources().getBoolean(R.bool.IsTablet)) {
+				if (getResources().getBoolean(R.bool.IsTablet) || HDMI_ACTIVE) {
 					FragmentManager fm = getFragmentManager();
-					Fragment convoFrag = new ConversationActivity();
+					Fragment convoFrag = new ConversationFrag();
 					FragmentTransaction ft = fm.beginTransaction();
 					ft.replace(R.id.convo_frag, convoFrag).commit();
 				} else {
@@ -97,7 +97,7 @@ public class BaseActivity extends Activity implements Constants{
 		});
 		
 		mPrefs = getSharedPreferences( CreateAccountActivity.PREFS, Context.MODE_PRIVATE );
-		if (getResources().getBoolean(R.bool.IsTablet)) {
+		if (getResources().getBoolean(R.bool.IsTablet) || HDMI_ACTIVE) {
 			FragmentManager fm = getFragmentManager();
 			Fragment inboxFrag = new InboxActivity();
 			FragmentTransaction ft = fm.beginTransaction();
@@ -390,11 +390,11 @@ public class BaseActivity extends Activity implements Constants{
 				convo = convos.get(position).get("name");
 				if (getResources().getBoolean(R.bool.IsTablet)) {
 					FragmentManager fm = getFragmentManager();
-					Fragment convoFrag = new ConversationActivity();
+					Fragment convoFrag = new ConversationFrag();
 					FragmentTransaction ft = fm.beginTransaction();
 					ft.replace(R.id.convo_frag, convoFrag).commit();
 				} else {
-					Intent intent = new Intent(BaseActivity.this, ConversationActivity.class);
+					Intent intent = new Intent(BaseActivity.this, ConversationFrag.class);
 					startActivity(intent);
 				}
 			}
