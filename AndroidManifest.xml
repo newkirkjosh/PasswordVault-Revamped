@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
     
     <!-- Only this application can receive the messages and registration result --> 
 	<permission android:name="org.research.chatclient.permission.C2D_MESSAGE" android:protectionLevel="signature" />

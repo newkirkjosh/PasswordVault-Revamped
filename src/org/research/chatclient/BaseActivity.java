@@ -64,6 +64,7 @@ public class BaseActivity extends Activity implements Constants{
 	public static final String CONVO_USER = "convo_user";
 	private SharedPreferences mPrefs;
 	private SQLiteDatabase db;
+	MessagesTable table;
 	private ListView lv;
 	private ProgressDialog mProgress;
 	private String convo;
@@ -76,7 +77,7 @@ public class BaseActivity extends Activity implements Constants{
 			setContentView(R.layout.base_layout_hdmi);
 		else
 			setContentView(R.layout.base_layout);
-		MessagesTable table = new MessagesTable(BaseActivity.this);
+		table = new MessagesTable(BaseActivity.this);
 		db = table.getWritableDatabase();
 		
 		Button btn = (Button)findViewById(R.id.createMessage);
@@ -97,21 +98,17 @@ public class BaseActivity extends Activity implements Constants{
 		});
 		
 		mPrefs = getSharedPreferences( CreateAccountActivity.PREFS, Context.MODE_PRIVATE );
-		if (getResources().getBoolean(R.bool.IsTablet) || HDMI_ACTIVE) {
-			FragmentManager fm = getFragmentManager();
-			Fragment inboxFrag = new InboxActivity();
-			FragmentTransaction ft = fm.beginTransaction();
-			ft.replace(R.id.inbox_frag, inboxFrag).commit();
-		} else {
-			FragmentManager fm = getFragmentManager();
-			Fragment inboxFrag = new InboxActivity();
-			FragmentTransaction ft = fm.beginTransaction();
-			ft.replace(android.R.id.content, inboxFrag).commit();
-		}
+		
+		FragmentManager fm = getFragmentManager();
+		Fragment inboxFrag = new InboxActivity();
+		FragmentTransaction ft = fm.beginTransaction();
+		ft.replace(R.id.inbox_frag, inboxFrag).commit();
+		
 		mProgress = new ProgressDialog(this);
 	    mProgress.setIndeterminate(true);
 	    mProgress.setCancelable(true);
 	    mProgress.setMessage("Downloading...");
+	    
 	}
 	
 	@Override
@@ -127,7 +124,7 @@ public class BaseActivity extends Activity implements Constants{
 	}
 	
 	public void sendMessage(HttpPost httppost){
-		
+		new SendMessageTask().execute(httppost);
 	}
 	
 	protected class SendMessageTask extends AsyncTask<HttpPost, Void, InputStream> {
@@ -168,8 +165,7 @@ public class BaseActivity extends Activity implements Constants{
 	     }
 	 }
 	
-	protected void insertMessage(String sender, String message, String time){
-		String recipient = (String)((Spinner)findViewById(R.id.personSpin)).getSelectedItem();
+	protected void insertMessage(String sender, String message, String time, String recipient){
 		
 		ContentValues values = new ContentValues();
 		values.put(SENDER, sender);
@@ -190,6 +186,8 @@ public class BaseActivity extends Activity implements Constants{
 	public void onResume(){
 		super.onResume();
 		
+		db = table.getWritableDatabase();
+		
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_ACTION);
 		registerReceiver(receiver, filter);
@@ -198,6 +196,8 @@ public class BaseActivity extends Activity implements Constants{
 	@Override
 	protected void onPause() {
 		super.onPause();
+		
+		db.close();
 		
 		this.unregisterReceiver(receiver);
 	}
@@ -278,7 +278,7 @@ public class BaseActivity extends Activity implements Constants{
 	    	 }
 			try {
 				boolean split = false;
-				String line = "";
+				String line;
 		        String response = "";
 		        String[] cmd = null;
 				JSONArray messages = new JSONArray(text);
@@ -299,11 +299,11 @@ public class BaseActivity extends Activity implements Constants{
 								try {
 									//read all lines from stream
 									
-									while( (line = dIn.readLine()) != null && !line.equals("") ){
+									while((line = dIn.readLine()) != null){
 										response += line + "\n";
 									}
 									try{
-							    		HttpPost httppost = new HttpPost("http://devimiiphone1.nku.edu/research_chat_client/testphp/send_message.php");
+							    		HttpPost httppost = new HttpPost("http://devimiiphone1.nku.edu/research_chat_client/chat_client_server/send_message.php");
 							    		LinkedList<NameValuePair> nameValuePairs = new LinkedList<NameValuePair>();
 							    		
 							    		nameValuePairs.add(new BasicNameValuePair("recipient", obj.getString(SENDER)));
@@ -359,6 +359,10 @@ public class BaseActivity extends Activity implements Constants{
 		loadList();
 	}
 	
+	public void setListView(ListView lv){
+		this.lv = lv;
+	}
+	
 	public void loadList(){
 		Cursor idCursor = db.rawQuery("Select distinct " + OTHER_MEMBER + " from " + MESSAGE_TABLE_NAME, null);
 		ArrayList<String> members = new ArrayList<String>();
@@ -388,13 +392,14 @@ public class BaseActivity extends Activity implements Constants{
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				convo = convos.get(position).get("name");
-				if (getResources().getBoolean(R.bool.IsTablet)) {
+				if (getResources().getBoolean(R.bool.IsTablet) || HDMI_ACTIVE) {
 					FragmentManager fm = getFragmentManager();
 					Fragment convoFrag = new ConversationFrag();
 					FragmentTransaction ft = fm.beginTransaction();
 					ft.replace(R.id.convo_frag, convoFrag).commit();
 				} else {
-					Intent intent = new Intent(BaseActivity.this, ConversationFrag.class);
+					Intent intent = new Intent(BaseActivity.this, ConversationActivity.class);
+					intent.putExtra(CONVO, convo);
 					startActivity(intent);
 				}
 			}

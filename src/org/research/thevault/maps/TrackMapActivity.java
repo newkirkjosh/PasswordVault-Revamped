@@ -25,6 +25,7 @@ import org.research.chatclient.R;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -61,6 +62,7 @@ public class TrackMapActivity extends MapActivity {
 	private static final double MILLION = 1E6;
 	private final int NKULAT = (int) (39.029579 * MILLION);
 	private final int NKULONG = (int) (-84.463509 * MILLION);
+	private int[] colors = new int[]{Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW};
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -148,7 +150,7 @@ public class TrackMapActivity extends MapActivity {
 		mCustomOverlay = new LinkedList<MyItemizedOverlay>();
 		Log.wtf("SIZE", mCheckedUsers.size() + "");
 		for(int i = 0; i < mCheckedUsers.size(); i++){
-			MyItemizedOverlay tempOver = new MyItemizedOverlay(this.getResources().getDrawable(R.drawable.inkupin), this, mMapView.getProjection());
+			MyItemizedOverlay tempOver = new MyItemizedOverlay(this.getResources().getDrawable(R.drawable.inkupin), this, mMapView.getProjection(), colors[i % colors.length]);
 			try {
 				String user = mCheckedUsers.get(i).toString();
 				JSONArray jsonArray = json.getJSONArray(user);

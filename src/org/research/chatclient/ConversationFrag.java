@@ -39,6 +39,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ConversationFrag extends Fragment implements Constants{
 	
@@ -64,7 +65,11 @@ public class ConversationFrag extends Fragment implements Constants{
 				((ScrollView)rootView.findViewById(R.id.convoScroll)).fullScroll(ScrollView.FOCUS_DOWN);
 			}
 		}, 500);
-		String convo = ((BaseActivity) getActivity()).getConvo();
+		String convo;
+		if(!getResources().getBoolean(R.bool.IsTablet))
+			convo = ((ConversationActivity) getActivity()).getConvo();
+		else
+			convo = ((BaseActivity) getActivity()).getConvo();
 	    if(convo != null){
 	    	mPrefs = getActivity().getSharedPreferences( CreateAccountActivity.PREFS, Context.MODE_PRIVATE );
 			mProgress = new ProgressDialog(getActivity());
@@ -98,6 +103,12 @@ public class ConversationFrag extends Fragment implements Constants{
 		return rootView;
 	}
 	
+	@Override
+	public void onDestroy() {
+		db.close();
+		super.onDestroy();
+	}
+	
 	public void sendMessage(){
 		
 		EditText messBox = (EditText)rootView.findViewById(R.id.messageText);
@@ -128,8 +139,8 @@ public class ConversationFrag extends Fragment implements Constants{
 	    		nameValuePairs.add(new BasicNameValuePair("time", time));
 	    		
 	    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			    
-			    ((BaseActivity) getActivity()).sendMessage(httppost);
+			    ((BaseActivity) getActivity()).insertMessage(sender, message, time, recipient);
+			    new SendMessageTask().execute(httppost);
 	    		
 	    	}catch(UnsupportedEncodingException e){
 	    		e.printStackTrace();
@@ -211,6 +222,44 @@ public class ConversationFrag extends Fragment implements Constants{
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+	     }
+	 }
+	
+	protected class SendMessageTask extends AsyncTask<HttpPost, Void, InputStream> {
+	    @Override
+		 protected InputStream doInBackground(HttpPost... post) {
+	    	HttpClient httpclient = new DefaultHttpClient();
+	    	InputStream stream = null;
+	    	HttpResponse response;
+			try {
+				response = httpclient.execute(post[0]);
+				HttpEntity entity = response.getEntity();
+				stream = entity.getContent();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	        return stream;
+	     }
+
+	     @Override
+	     protected void onPostExecute(InputStream result) {
+	    	 String text = "";
+	    	 
+	    	 try{
+	    		 if( result != null ){
+			    	 BufferedReader br = new BufferedReader(new InputStreamReader(result));
+			    	 String line = br.readLine();
+			    	 
+			    	 while( line != null ){
+			    		 text += line + " ";
+			    		 line = br.readLine();
+			    	 }
+	    		 }
+	    	 }catch (IOException e) {
+	    		 e.printStackTrace();
+	    	 }
+	    	 Toast.makeText(getActivity(), "Message Sent", Toast.LENGTH_LONG).show();
+	    	 Log.d("Response", "TIME: " + text);
 	     }
 	 }
 }

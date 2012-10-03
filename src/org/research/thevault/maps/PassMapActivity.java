@@ -19,7 +19,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.research.chatclient.BaseActivity;
 import org.research.chatclient.CreateAccountActivity;
 import org.research.chatclient.R;
 
@@ -42,8 +41,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -74,8 +71,7 @@ public class PassMapActivity extends MapActivity implements LocationListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
+		//getActionBar().setDisplayHomeAsUpEnabled(true);
 		mPrefs = getSharedPreferences( CreateAccountActivity.PREFS, Context.MODE_PRIVATE );
 		mUsername = mPrefs.getString( CreateAccountActivity.USER, "" ); 
 				

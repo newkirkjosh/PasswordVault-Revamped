@@ -24,7 +24,6 @@ import android.widget.ListView;
 
 public class InboxActivity extends Fragment implements Constants{
 	
-	
 	private ListView lv;
 	private SharedPreferences mPrefs;
 	
@@ -45,7 +44,8 @@ public class InboxActivity extends Fragment implements Constants{
     		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
     		
     		lv = (ListView)v.findViewById(R.id.conversation_list);
-    		
+    		((BaseActivity) getActivity()).setListView(lv);
+    		((BaseActivity) getActivity()).loadList();
     		((BaseActivity) getActivity()).downloadMessages(httppost);
     		registerForContextMenu(lv);
     	}catch(UnsupportedEncodingException e){

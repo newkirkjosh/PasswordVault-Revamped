@@ -24,16 +24,19 @@ public class MyItemizedOverlay extends ItemizedOverlay{
 	private Paint mPaint;
 	private Point p1, p2;
 	private Path path;
+	private int color;
 	private Projection mProjection;
 	
 	public MyItemizedOverlay(Drawable defaultMarker) {
 		super(boundCenterBottom(defaultMarker));
 	}
 	
-	public MyItemizedOverlay(Drawable defaultMarker, Context context, Projection projection) {
+	public MyItemizedOverlay(Drawable defaultMarker, Context context, Projection projection, int color) {
 		  super(boundCenterBottom(defaultMarker));
 		  mContext = context;
 		  this.mProjection = projection;
+		  this.color = color;
+		  
 		}
 	
 	public void addOverlay(OverlayItem overlay) {
@@ -71,7 +74,7 @@ public class MyItemizedOverlay extends ItemizedOverlay{
 			// Settings for the line
 			mPaint = new Paint();
 			mPaint.setDither(true);
-			mPaint.setColor(Color.RED);
+			mPaint.setColor(color);
 			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 			mPaint.setStrokeJoin(Paint.Join.ROUND);
 			mPaint.setStrokeCap(Paint.Cap.ROUND);
