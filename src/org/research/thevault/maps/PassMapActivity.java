@@ -19,6 +19,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.research.chatclient.BaseActivity;
 import org.research.chatclient.CreateAccountActivity;
 import org.research.chatclient.R;
 
@@ -36,10 +37,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -214,6 +218,7 @@ public class PassMapActivity extends MapActivity implements LocationListener{
 				loc = (loc == null) ? mLocationManager.getLastKnownLocation(gpsProvider) : loc;
 				loc = (loc == null) ? mLocationManager.getLastKnownLocation(provider) : loc;
 				
+				Log.d("Location first recieved", loc.toString());
 				makeUseOfLocation(loc);
 			}
 		default:
@@ -377,32 +382,35 @@ public class PassMapActivity extends MapActivity implements LocationListener{
 	public void onLocationChanged(Location location) {
 		final String lat = "" + location.getLatitude();
 		final String lon = "" + location.getLongitude();
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				try{
-					HttpClient httpclient = new DefaultHttpClient();
-		    		HttpPost httppost = new HttpPost("http://devimiiphone1.nku.edu/research_chat_client/password_vault_server/add_location.php");
-		    		LinkedList<NameValuePair> nameValuePairs = new LinkedList<NameValuePair>();
-		    		
-		    		nameValuePairs.add(new BasicNameValuePair("user", mUsername));
-		    		nameValuePairs.add(new BasicNameValuePair("lat", lat));
-		    		nameValuePairs.add(new BasicNameValuePair("lon", lon));
-		    		
-		    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-		    		HttpResponse response = httpclient.execute(httppost);
-		    	}catch(UnsupportedEncodingException e){
-		    		e.printStackTrace();
-		    	} catch (ClientProtocolException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		if(inTimeWindow()){
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					try{
+						HttpClient httpclient = new DefaultHttpClient();
+			    		HttpPost httppost = new HttpPost("http://devimiiphone1.nku.edu/research_chat_client/password_vault_server/add_location.php");
+			    		LinkedList<NameValuePair> nameValuePairs = new LinkedList<NameValuePair>();
+			    		
+			    		nameValuePairs.add(new BasicNameValuePair("user", mUsername));
+			    		nameValuePairs.add(new BasicNameValuePair("lat", lat));
+			    		nameValuePairs.add(new BasicNameValuePair("lon", lon));
+			    		
+			    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			    		HttpResponse response = httpclient.execute(httppost);
+			    		Log.d("RES", "fail? " + response.getEntity().toString());
+			    	}catch(UnsupportedEncodingException e){
+			    		e.printStackTrace();
+			    	} catch (ClientProtocolException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-			}
-		}).start();
+			}).start();
+		}
 		makeUseOfLocation(location);
 		
 	}
@@ -424,6 +432,25 @@ public class PassMapActivity extends MapActivity implements LocationListener{
 
 	@Override
 	protected boolean isRouteDisplayed() {
+		return false;
+	}
+	
+	// method to validate user creditials and time window
+	private synchronized boolean inTimeWindow() {
+		long windowStart = 300000;
+		long lastPost = mPrefs.getLong("POST_TIME", 0);
+		long curTime = System.currentTimeMillis();
+
+		// check if user outside time window
+		if (curTime - windowStart > lastPost) {
+			SharedPreferences.Editor editor = mPrefs.edit();
+			editor.putLong("POST_TIME", curTime);
+			editor.commit();
+
+			// return outside time window
+			return true;
+		}
+		// return inside time window and logged in
 		return false;
 	}
 }

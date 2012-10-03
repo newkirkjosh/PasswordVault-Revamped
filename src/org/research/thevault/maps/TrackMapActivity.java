@@ -24,9 +24,10 @@ import org.research.chatclient.R;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Color;
+import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,8 +61,6 @@ public class TrackMapActivity extends MapActivity {
 	private static final double MILLION = 1E6;
 	private final int NKULAT = (int) (39.029579 * MILLION);
 	private final int NKULONG = (int) (-84.463509 * MILLION);
-	private int color = 0;
-	private int[] colors = new int[]{Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW};
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -147,12 +146,14 @@ public class TrackMapActivity extends MapActivity {
 		overlays = mMapView.getOverlays();
 		overlays.clear();
 		mCustomOverlay = new LinkedList<MyItemizedOverlay>();
+		Log.wtf("SIZE", mCheckedUsers.size() + "");
 		for(int i = 0; i < mCheckedUsers.size(); i++){
-			MyItemizedOverlay tempOver = new MyItemizedOverlay(this.getResources().getDrawable(R.drawable.inkupin), this, mMapView.getProjection(), colors[color%colors.length]);
-			++color;
+			MyItemizedOverlay tempOver = new MyItemizedOverlay(this.getResources().getDrawable(R.drawable.inkupin), this, mMapView.getProjection());
 			try {
 				String user = mCheckedUsers.get(i).toString();
 				JSONArray jsonArray = json.getJSONArray(user);
+				Log.d("USER", user);
+				Log.d("JSONAR", jsonArray.toString());
 				for( int j = 0; j < jsonArray.length(); j++){
 					JSONObject obj = jsonArray.getJSONObject(j);
 					tempOver.addOverlay(new OverlayItem(returnGeopoint(obj.getDouble("lat"), obj.getDouble("lon")), "Tracked user", user));
@@ -233,6 +234,7 @@ public class TrackMapActivity extends MapActivity {
 			if (mProgress.isShowing())
 				mProgress.dismiss();
 			try {
+				Log.d("RES", "RES: " + text);
 				JSONArray users = new JSONArray(text);
 				mUsers = new TrackedUser[users.length()];
 				for (int i = 0; i < users.length(); i++)
@@ -289,6 +291,7 @@ public class TrackMapActivity extends MapActivity {
 				e.printStackTrace();
 			}
 			try {
+				Log.d("RES", "RES: " + text);
 				JSONObject json = new JSONObject(text);
 				// Add Overlays
 				addOverlayItems(json);

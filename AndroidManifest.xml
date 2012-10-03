@@ -152,7 +152,11 @@
 			android:name="org.research.chatclient.InboxActivity"
 			android:label="@string/create_chat">
 		</activity>
-        <activity android:name=".ConversationActivity"
+		<activity
+			android:name="org.research.chatclient.ConversationActivity"
+			android:label="@string/create_chat">
+		</activity>
+        <activity android:name=".ConversationFrag"
             android:windowSoftInputMode="adjustResize"/>
         <activity
 		    android:name="org.research.thevault.maps.TrackMapActivity"

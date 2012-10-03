@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,6 +64,7 @@ public class CreateAccountActivity extends Activity {
 					username = userText.getText().toString();
 					if(!username.equals("") && !c2dm.equals("")){
 				    	try{
+				    		Log.d("NEW USER", "NEW USER");
 				    		HttpPost httppost = new HttpPost("http://devimiiphone1.nku.edu/research_chat_client/chat_client_server/create_new_user.php");
 				    		LinkedList<NameValuePair> nameValuePairs = new LinkedList<NameValuePair>();
 				    		
@@ -139,6 +141,7 @@ public class CreateAccountActivity extends Activity {
 	    	 
 	    	 if(mProgress.isShowing())
 	    		 mProgress.dismiss();
+	    	 Log.d("Response", text);
 	    	 if(text.trim().equals("CREATED")){
 	    		 Editor editor = getSharedPreferences( CreateAccountActivity.PREFS, Context.MODE_PRIVATE).edit();
 	    		 editor.putBoolean(CREATED, true);

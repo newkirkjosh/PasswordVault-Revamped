@@ -39,6 +39,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -83,9 +84,9 @@ public class BaseActivity extends Activity implements Constants{
 			
 			@Override
 			public void onClick(View arg0) {
-				if (getResources().getBoolean(R.bool.IsTablet)) {
+				if (getResources().getBoolean(R.bool.IsTablet) || HDMI_ACTIVE) {
 					FragmentManager fm = getFragmentManager();
-					Fragment convoFrag = new ConversationActivity();
+					Fragment convoFrag = new ConversationFrag();
 					FragmentTransaction ft = fm.beginTransaction();
 					ft.replace(R.id.convo_frag, convoFrag).commit();
 				} else {
@@ -96,7 +97,7 @@ public class BaseActivity extends Activity implements Constants{
 		});
 		
 		mPrefs = getSharedPreferences( CreateAccountActivity.PREFS, Context.MODE_PRIVATE );
-		if (getResources().getBoolean(R.bool.IsTablet)) {
+		if (getResources().getBoolean(R.bool.IsTablet) || HDMI_ACTIVE) {
 			FragmentManager fm = getFragmentManager();
 			Fragment inboxFrag = new InboxActivity();
 			FragmentTransaction ft = fm.beginTransaction();
@@ -163,6 +164,7 @@ public class BaseActivity extends Activity implements Constants{
 	    		 e.printStackTrace();
 	    	 }
 	    	 Toast.makeText(BaseActivity.this, "Message Sent", Toast.LENGTH_LONG).show();
+	    	 Log.d("Response", "TIME: " + text);
 	     }
 	 }
 	
@@ -284,6 +286,7 @@ public class BaseActivity extends Activity implements Constants{
 				for (int i = 0; i < messages.length(); i++) {
 					JSONObject obj = messages.getJSONObject(i);
 					if( obj.getString(MESSAGE).matches("^COMMAND:.*:.*$")){
+						Log.d("CMD", obj.getString(MESSAGE));
 						split = true;
 		            	cmd = obj.getString(MESSAGE).split( ":" );
 		            	try {
@@ -375,6 +378,7 @@ public class BaseActivity extends Activity implements Constants{
 	   	        map.put( "name", convoCursor.getString(convoCursor.getColumnIndex(OTHER_MEMBER)) );
 	   	        map.put( "message", convoCursor.getString(convoCursor.getColumnIndex(MESSAGE)) );
 	   	        map.put( "time", formatTime(convoCursor.getString(convoCursor.getColumnIndex(TIMESTAMP))) );
+	   	        Log.d("MAP", map.toString());
 				convos.add(map);
 			}
 		}
@@ -386,11 +390,11 @@ public class BaseActivity extends Activity implements Constants{
 				convo = convos.get(position).get("name");
 				if (getResources().getBoolean(R.bool.IsTablet)) {
 					FragmentManager fm = getFragmentManager();
-					Fragment convoFrag = new ConversationActivity();
+					Fragment convoFrag = new ConversationFrag();
 					FragmentTransaction ft = fm.beginTransaction();
 					ft.replace(R.id.convo_frag, convoFrag).commit();
 				} else {
-					Intent intent = new Intent(BaseActivity.this, ConversationActivity.class);
+					Intent intent = new Intent(BaseActivity.this, ConversationFrag.class);
 					startActivity(intent);
 				}
 			}

@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 public class HdmiBroadcastReceiver extends BroadcastReceiver{
 	
@@ -22,9 +23,11 @@ public class HdmiBroadcastReceiver extends BroadcastReceiver{
 				int hdcp = extras.getInt("hdcp");
 				if(hdmi == 1 && hdcp == 1){
 					BaseActivity.HDMI_ACTIVE = true;
+					Log.d("HDMI", "CONNECTED");
 				}
 				else{
 					BaseActivity.HDMI_ACTIVE = false;
+					Log.d("HDMI", "DIS-CONNECTED");
 				}
 			}
 		}
