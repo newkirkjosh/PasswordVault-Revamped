@@ -14,7 +14,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.research.chatclient.R;
@@ -25,7 +24,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -107,7 +105,6 @@ public class AdminActivity extends Activity {
 					while ((line = br.readLine()) != null) {
 						text += line;
 					}
-					Log.d("RES", "RES: " + text);
 					if (mProgress.isShowing())
 						mProgress.dismiss();
 					if(text.equals("AUTHORIZED")){

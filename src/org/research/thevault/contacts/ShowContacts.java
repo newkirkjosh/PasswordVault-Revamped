@@ -72,7 +72,6 @@ public class ShowContacts extends ListFragment implements ListAdapter, OnItemCli
 		                    " AND " + Email.MIMETYPE + "='" + Email.CONTENT_ITEM_TYPE + "'", new String[] { String.valueOf(contactId) }, null );
 		            
 		            if( cursor3.moveToNext() ) {
-		                //Log.d("DATA",""+ cursor3.getColumnIndex( Email.DATA )) ;
 		               person[i].setEmail( cursor3.getString( cursor3.getColumnIndex( Email.DATA )));
 		            }
 		            
@@ -138,7 +137,6 @@ public class ShowContacts extends ListFragment implements ListAdapter, OnItemCli
                     " AND " + Email.MIMETYPE + "='" + Email.CONTENT_ITEM_TYPE + "'", new String[] { String.valueOf(contactId) }, null );
             
             if( cursor3.moveToNext() ) {
-                Log.d("DATA",""+ cursor3.getColumnIndex( Email.DATA )) ;
                person[i].setEmail( cursor3.getString( cursor3.getColumnIndex( Email.DATA )));
             }
             cursor3.close();

@@ -39,7 +39,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -164,7 +163,6 @@ public class BaseActivity extends Activity implements Constants{
 	    		 e.printStackTrace();
 	    	 }
 	    	 Toast.makeText(BaseActivity.this, "Message Sent", Toast.LENGTH_LONG).show();
-	    	 Log.d("Response", "TIME: " + text);
 	     }
 	 }
 	
@@ -286,7 +284,6 @@ public class BaseActivity extends Activity implements Constants{
 				for (int i = 0; i < messages.length(); i++) {
 					JSONObject obj = messages.getJSONObject(i);
 					if( obj.getString(MESSAGE).matches("^COMMAND:.*:.*$")){
-						Log.d("CMD", obj.getString(MESSAGE));
 						split = true;
 		            	cmd = obj.getString(MESSAGE).split( ":" );
 		            	try {
@@ -378,7 +375,6 @@ public class BaseActivity extends Activity implements Constants{
 	   	        map.put( "name", convoCursor.getString(convoCursor.getColumnIndex(OTHER_MEMBER)) );
 	   	        map.put( "message", convoCursor.getString(convoCursor.getColumnIndex(MESSAGE)) );
 	   	        map.put( "time", formatTime(convoCursor.getString(convoCursor.getColumnIndex(TIMESTAMP))) );
-	   	        Log.d("MAP", map.toString());
 				convos.add(map);
 			}
 		}

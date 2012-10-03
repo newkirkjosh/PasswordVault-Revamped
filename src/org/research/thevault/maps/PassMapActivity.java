@@ -19,7 +19,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.research.chatclient.BaseActivity;
 import org.research.chatclient.CreateAccountActivity;
 import org.research.chatclient.R;
 
@@ -37,12 +36,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.widget.ListView;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -217,7 +214,6 @@ public class PassMapActivity extends MapActivity implements LocationListener{
 				loc = (loc == null) ? mLocationManager.getLastKnownLocation(gpsProvider) : loc;
 				loc = (loc == null) ? mLocationManager.getLastKnownLocation(provider) : loc;
 				
-				Log.d("Location first recieved", loc.toString());
 				makeUseOfLocation(loc);
 			}
 		default:
@@ -396,7 +392,6 @@ public class PassMapActivity extends MapActivity implements LocationListener{
 		    		
 		    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 		    		HttpResponse response = httpclient.execute(httppost);
-		    		Log.d("RES", "fail? " + response.getEntity().toString());
 		    	}catch(UnsupportedEncodingException e){
 		    		e.printStackTrace();
 		    	} catch (ClientProtocolException e) {

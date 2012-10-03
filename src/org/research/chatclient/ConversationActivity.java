@@ -27,7 +27,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -106,7 +105,6 @@ public class ConversationActivity extends Fragment implements Constants{
 		String sender = mPrefs.getString(CreateAccountActivity.USER, "");
 		String time = "" + System.currentTimeMillis();
 		String recipient = (String)spin.getSelectedItem();
-		Log.d("selected", recipient);
 		if(!message.equals("")){
 			//insertMessage(sender, message, time);
 			LayoutInflater inflate = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
