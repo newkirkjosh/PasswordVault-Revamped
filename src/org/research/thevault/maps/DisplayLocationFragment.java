@@ -32,7 +32,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,7 +106,6 @@ public class DisplayLocationFragment extends ListFragment{
 	        String tmp;
 	        while((tmp = br.readLine()) != null)
         		b.append(tmp + "\n");
-	        Log.d("res", "res: " + b.toString());
 	        jsonArr = new JSONArray(b.toString());
 	    } catch (ClientProtocolException e) {
 	        // TODO Auto-generated catch block

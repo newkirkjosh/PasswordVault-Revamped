@@ -36,7 +36,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -214,7 +213,6 @@ public class PassMapActivity extends MapActivity implements LocationListener{
 				loc = (loc == null) ? mLocationManager.getLastKnownLocation(gpsProvider) : loc;
 				loc = (loc == null) ? mLocationManager.getLastKnownLocation(provider) : loc;
 				
-				Log.d("Location first recieved", loc.toString());
 				makeUseOfLocation(loc);
 			}
 		default:
@@ -394,7 +392,6 @@ public class PassMapActivity extends MapActivity implements LocationListener{
 			    		
 			    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			    		HttpResponse response = httpclient.execute(httppost);
-			    		Log.d("RES", "fail? " + response.getEntity().toString());
 			    	}catch(UnsupportedEncodingException e){
 			    		e.printStackTrace();
 			    	} catch (ClientProtocolException e) {
