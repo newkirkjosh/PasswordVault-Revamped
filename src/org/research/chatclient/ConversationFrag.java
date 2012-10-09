@@ -65,7 +65,7 @@ public class ConversationFrag extends Fragment implements Constants{
 			}
 		}, 500);
 		String convo;
-		if(!getResources().getBoolean(R.bool.IsTablet))
+		if(!getResources().getBoolean(R.bool.IsTablet) && !BaseActivity.HDMI_ACTIVE)
 			convo = ((ConversationActivity) getActivity()).getConvo();
 		else
 			convo = ((BaseActivity) getActivity()).getConvo();

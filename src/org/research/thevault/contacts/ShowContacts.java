@@ -20,6 +20,7 @@ import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,46 +57,49 @@ public class ShowContacts extends ListFragment implements ListAdapter, OnItemCli
 		            Uri contactUri = ContentUris.withAppendedId(Contacts.CONTENT_URI, contactId);
 		            Uri photoUri = Uri.withAppendedPath(contactUri, Contacts.Photo.CONTENT_DIRECTORY);
 		            
-		            
-		            Cursor cursor3 = getActivity().getContentResolver().query(photoUri, new String[] {Contacts.Photo.DATA15, Contacts.Photo.DATA14}, null, null, null);
-		            
-		            if( cursor3.moveToNext() ) {
-		                person[i] = new Persons( cursor.getString( cursor.getColumnIndex(  Contacts.DISPLAY_NAME )), cursor3.getBlob( cursor3.getColumnIndex( Contacts.Photo.DATA15 )), cursor3.getInt( cursor3.getColumnIndex( Contacts.Photo.DATA14 )));
-		            }else {
-		                person[i] = new Persons( cursor.getString( cursor.getColumnIndex(  Contacts.DISPLAY_NAME )), null, 0 );
+		            if(getActivity() != null){
+			            Cursor cursor3 = getActivity().getContentResolver().query(photoUri, new String[] {Contacts.Photo.DATA15, Contacts.Photo.DATA14}, null, null, null);
+			            
+			            if( cursor3.moveToNext() ) {
+			                person[i] = new Persons( cursor.getString( cursor.getColumnIndex(  Contacts.DISPLAY_NAME )), cursor3.getBlob( cursor3.getColumnIndex( Contacts.Photo.DATA15 )), cursor3.getInt( cursor3.getColumnIndex( Contacts.Photo.DATA14 )));
+			            }else {
+			                person[i] = new Persons( cursor.getString( cursor.getColumnIndex(  Contacts.DISPLAY_NAME )), null, 0 );
+			            }
+			            
+			            cursor3.close();
+			            
+			            //getting Email
+			            cursor3 = cr.query(Email.CONTENT_URI, new String[] {Email.DATA}, Data.CONTACT_ID + "=?" + 
+			                    " AND " + Email.MIMETYPE + "='" + Email.CONTENT_ITEM_TYPE + "'", new String[] { String.valueOf(contactId) }, null );
+			            
+			            if( cursor3.moveToNext() ) {
+			               person[i].setEmail( cursor3.getString( cursor3.getColumnIndex( Email.DATA )));
+			            }
+			            
+			            cursor3.close();
+			            
+			            //getting Phone Number
+			            cursor3 = cr.query(Data.CONTENT_URI, new String[] { Phone.NUMBER }, Data.CONTACT_ID + "=?" + 
+			                    " AND " + Data.MIMETYPE + "='" + Phone.CONTENT_ITEM_TYPE + "'", new String[] { String.valueOf(contactId) }, null );
+			            
+			            if( cursor3.moveToNext() ) {
+			                person[i].setNumber( cursor3.getString( cursor3.getColumnIndex( Phone.NUMBER )));
+			            }
+			            
+			            cursor3.close();
 		            }
-		            
-		            cursor3.close();
-		            
-		            //getting Email
-		            cursor3 = cr.query(Email.CONTENT_URI, new String[] {Email.DATA}, Data.CONTACT_ID + "=?" + 
-		                    " AND " + Email.MIMETYPE + "='" + Email.CONTENT_ITEM_TYPE + "'", new String[] { String.valueOf(contactId) }, null );
-		            
-		            if( cursor3.moveToNext() ) {
-		               person[i].setEmail( cursor3.getString( cursor3.getColumnIndex( Email.DATA )));
-		            }
-		            
-		            cursor3.close();
-		            
-		            //getting Phone Number
-		            cursor3 = cr.query(Data.CONTENT_URI, new String[] { Phone.NUMBER }, Data.CONTACT_ID + "=?" + 
-		                    " AND " + Data.MIMETYPE + "='" + Phone.CONTENT_ITEM_TYPE + "'", new String[] { String.valueOf(contactId) }, null );
-		            
-		            if( cursor3.moveToNext() ) {
-		                person[i].setNumber( cursor3.getString( cursor3.getColumnIndex( Phone.NUMBER )));
-		            }
-		            
-		            cursor3.close();
 		        }
 				
 				cursor.close();
-				getActivity().runOnUiThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						setListAdapter( ShowContacts.this );
-					}
-				});
+				if(getActivity() != null){
+					getActivity().runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							setListAdapter( ShowContacts.this );
+						}
+					});
+				}
 			}
 		};
 		

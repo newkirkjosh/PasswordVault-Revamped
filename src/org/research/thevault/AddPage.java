@@ -106,7 +106,7 @@ public class AddPage extends MyFragment implements Constants{
 
 		if( !siteStr.equals( "" ) && !nameStr.equals( "" ) && !passStr.equals( "" ) ){
 			addSite( siteStr, nameStr, passStr );
-			if(getResources().getBoolean(R.bool.IsTablet)){
+			if(getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE){
 				getActivity().getFragmentManager().beginTransaction().remove(this).commit();
 				((SitesList)getActivity().getFragmentManager().findFragmentById(R.id.list_frag)).refreshList();
 			}

@@ -35,7 +35,7 @@ public class HomeActivity extends Activity {
 		else
 			setContentView(R.layout.home_layout);
 
-		if (getResources().getBoolean(R.bool.IsTablet)) {
+		if (getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE) {
 			FragmentManager fm = getFragmentManager();
 			Fragment listFrag = new SitesList();
 			FragmentTransaction ft = fm.beginTransaction();

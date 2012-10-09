@@ -344,7 +344,7 @@ public class BaseActivity extends Activity implements Constants{
 	 }
 	
 	private String formatTime(String str){
-		String pattern = "MM/dd/yy hh:mm a";
+		String pattern = "MM/dd hh:mm";
 	    SimpleDateFormat format = new SimpleDateFormat(pattern);
 	    String date =  format.format(new Date(Long.valueOf(str)));
 	    return date;

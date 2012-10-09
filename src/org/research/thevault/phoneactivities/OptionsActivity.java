@@ -38,7 +38,7 @@ public class OptionsActivity extends Activity{
 		Fragment optionsFrag = new OptionsFragment();
 		FragmentTransaction ft = fm.beginTransaction();
 				
-		if (getResources().getBoolean(R.bool.IsTablet)) {;
+		if (getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE) {;
 			ft.replace(R.id.list_frag, optionsFrag).commit();
 		} else {
 			ft.replace(android.R.id.content, optionsFrag).commit();
