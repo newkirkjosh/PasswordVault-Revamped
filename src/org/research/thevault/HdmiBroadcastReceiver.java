@@ -20,7 +20,7 @@ public class HdmiBroadcastReceiver extends BroadcastReceiver{
 			if(extras != null){
 				int hdmi = extras.getInt("hdmi");
 				int hdcp = extras.getInt("hdcp");
-				if(hdmi == 1 && hdcp == 1){
+				if(hdmi == 1){
 					BaseActivity.HDMI_ACTIVE = true;
 				}
 				else{

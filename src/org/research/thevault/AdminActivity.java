@@ -109,6 +109,7 @@ public class AdminActivity extends Activity {
 						mProgress.dismiss();
 					if(text.equals("AUTHORIZED")){
 						Intent intent = new Intent(AdminActivity.this, OptionsActivity.class);
+						intent.putExtra("ADMIN", username.getText().toString());
 						startActivity(intent);
 						finish();
 					} else if(text.equals("NOT-AUTHORIZED")){

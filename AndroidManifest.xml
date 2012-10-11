@@ -132,7 +132,7 @@
 		</activity>
 		<activity 
         	android:name="org.research.thevault.contacts.DisplayPerson"
-        	android:label="@string/bad_page_details"
+        	android:label="@string/contact_details"
 			android:theme="@android:style/Theme.Dialog" >
 		</activity>
 		<activity

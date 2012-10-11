@@ -4,6 +4,7 @@ import org.research.chatclient.BaseActivity;
 import org.research.chatclient.R;
 import org.research.thevault.OptionsFragment;
 import org.research.thevault.SitesList;
+import org.research.thevault.TextFrag;
 import org.research.thevault.apps.ShowApps;
 import org.research.thevault.contacts.ShowContacts;
 import org.research.thevault.maps.DisplayLocationFragment;
@@ -38,8 +39,8 @@ public class OptionsActivity extends Activity{
 		Fragment optionsFrag = new OptionsFragment();
 		FragmentTransaction ft = fm.beginTransaction();
 				
-		if (getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE) {;
-			ft.replace(R.id.list_frag, optionsFrag).commit();
+		if (getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE) {
+			ft.replace(R.id.list_frag, optionsFrag).replace(R.id.right_frag, new TextFrag()).commit();
 		} else {
 			ft.replace(android.R.id.content, optionsFrag).commit();
 		}
