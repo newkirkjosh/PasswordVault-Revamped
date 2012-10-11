@@ -24,7 +24,7 @@ public class HdmiBroadcastReceiver extends BroadcastReceiver{
 					BaseActivity.HDMI_ACTIVE = true;
 				}
 				else{
-					BaseActivity.HDMI_ACTIVE = false;
+					BaseActivity.HDMI_ACTIVE = true;
 				}
 			}
 		}
