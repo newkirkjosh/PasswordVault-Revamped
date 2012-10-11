@@ -66,7 +66,7 @@ public class BaseActivity extends Activity implements Constants{
 	private ListView lv;
 	private ProgressDialog mProgress;
 	private String convo;
-	public static boolean HDMI_ACTIVE = false;
+	public static boolean HDMI_ACTIVE = true;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
