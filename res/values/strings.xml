@@ -48,7 +48,7 @@
 	<string name="location_no_items">No locations have been recorded yet.</string>
 	<string name="display_location_title">Recent Locations Visited</string>
 	<string name="gen_random_location">Your Current Location</string>
-	<string name="server_menu_title">Connect to Server</string>
+	<string name="server_menu_title">Chat</string>
 	<string name="enter_your_username">"Enter your username: "</string>
 	<string name="enter_your_password">"Enter your password: "</string>
 	<string name="connect">Connect</string>

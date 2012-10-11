@@ -109,13 +109,6 @@ public class BaseActivity extends Activity implements Constants{
 	    
 	}
 	
-	@Override
-    public boolean onCreateOptionsMenu( Menu menu ){
-    	super.onCreateOptionsMenu( menu );
-    	MenuInflater inflater = getMenuInflater();
-    	inflater.inflate( R.menu.menu, menu);
-    	return true;
-    }
 	
 	public String getConvo(){
 		return convo;
