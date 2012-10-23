@@ -69,8 +69,10 @@ public class OptionsActivity extends Activity{
 			}else if(option.equals("Tracking")){
 				if(rightFrag != null){
 					FragmentManager fm = getFragmentManager();
-					FragmentTransaction ft = fm.beginTransaction();
-					ft.remove(rightFrag).commit();
+					if(rightFrag.equals(fm.findFragmentById(R.id.right_frag))){
+						FragmentTransaction ft = fm.beginTransaction();
+						ft.remove(rightFrag).commit();
+					}
 				}
 				intent = new Intent(OptionsActivity.this, TrackMapActivity.class);
 			}

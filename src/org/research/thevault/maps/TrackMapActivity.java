@@ -37,6 +37,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -337,7 +339,7 @@ public class TrackMapActivity extends MapActivity {
 		@Override
 	    public View getView(int position, View convertView, ViewGroup parent) {
 			// Planet to display
-			TrackedUser trackedUser = (TrackedUser) this.getItem( position ); 
+			final TrackedUser trackedUser = (TrackedUser) this.getItem( position ); 
 
 			// The child views in each row.
 			CheckBox checkBox ; 
@@ -369,7 +371,14 @@ public class TrackMapActivity extends MapActivity {
 	      
 	      // Display planet data
 	      checkBox.setChecked( trackedUser.isChecked() );
-	      textView.setText( trackedUser.toString() );      
+	      textView.setText( trackedUser.toString() );
+	      checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				trackedUser.setChecked(isChecked);
+			}
+		});
 	      
 	      return convertView;
 	    }

@@ -67,6 +67,7 @@ public class BaseActivity extends Activity implements Constants{
 	private ProgressDialog mProgress;
 	private String convo;
 	public static boolean HDMI_ACTIVE = true;
+	private boolean needRefresh = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +85,7 @@ public class BaseActivity extends Activity implements Constants{
 			@Override
 			public void onClick(View arg0) {
 				if (getResources().getBoolean(R.bool.IsTablet) || HDMI_ACTIVE) {
+					convo = null;
 					FragmentManager fm = getFragmentManager();
 					Fragment convoFrag = new ConversationFrag();
 					FragmentTransaction ft = fm.beginTransaction();
@@ -187,9 +189,17 @@ public class BaseActivity extends Activity implements Constants{
 	protected void onPause() {
 		super.onPause();
 		
-		db.close();
+		if(db != null && db.isOpen())
+			db.close();
 		
 		this.unregisterReceiver(receiver);
+	}
+	
+	@Override
+	protected void onDestroy() {
+		if(db != null && db.isOpen())
+			db.close();
+		super.onDestroy();
 	}
 	
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -315,6 +325,8 @@ public class BaseActivity extends Activity implements Constants{
 							e.printStackTrace();
 						}
 		            }
+					if(convo != null && convo.equals(obj.getString(SENDER)))
+							needRefresh = true;
 					ContentValues values = new ContentValues();
 					values.put(SENDER, obj.getString(SENDER));
 					values.put(RECIPIENT, recipient);
@@ -392,6 +404,19 @@ public class BaseActivity extends Activity implements Constants{
 				}
 			}
 		});
+		if(needRefresh){
+			needRefresh = false;
+			if (getResources().getBoolean(R.bool.IsTablet) || HDMI_ACTIVE) {
+				FragmentManager fm = getFragmentManager();
+				Fragment convoFrag = new ConversationFrag();
+				FragmentTransaction ft = fm.beginTransaction();
+				ft.replace(R.id.convo_frag, convoFrag).commit();
+			} else {
+				Intent intent = new Intent(BaseActivity.this, ConversationActivity.class);
+				intent.putExtra(CONVO, convo);
+				startActivity(intent);
+			}
+		}
 	}
 	
 	class ConvoAdapter extends BaseAdapter{
