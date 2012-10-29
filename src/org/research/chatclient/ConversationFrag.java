@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
 import java.util.LinkedList;
 
 import org.apache.http.HttpEntity;
@@ -27,6 +28,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -114,7 +116,8 @@ public class ConversationFrag extends Fragment implements Constants{
 		String message = messBox.getText().toString();
 		messBox.setText("");
 		String sender = mPrefs.getString(CreateAccountActivity.USER, "");
-		String time = "" + System.currentTimeMillis();
+		String time = "" + Calendar.getInstance().getTimeInMillis();
+		time = time.substring(0, 10);
 		String recipient = (String)spin.getSelectedItem();
 		if(!message.equals("")){
 			//insertMessage(sender, message, time);

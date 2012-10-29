@@ -1,16 +1,19 @@
 package org.research.thevault;
 
+import java.util.Calendar;
+
+import org.research.chatclient.R;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ToggleButton;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import org.research.chatclient.R;
+import android.widget.Button;
+import android.widget.EditText;
 
 @SuppressWarnings("deprecation")
 public class PasswordVault extends Activity implements OnClickListener, Constants{
@@ -24,7 +27,7 @@ public class PasswordVault extends Activity implements OnClickListener, Constant
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.password_vault);
-        
+		
         pWord = (EditText) findViewById( R.id.login_password1 );
         Button loginButton = (Button) findViewById( R.id.login_button );
         loginButton.setOnClickListener( this );
