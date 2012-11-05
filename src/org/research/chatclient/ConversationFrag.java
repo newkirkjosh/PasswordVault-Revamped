@@ -110,6 +110,25 @@ public class ConversationFrag extends Fragment implements Constants{
 		super.onDestroy();
 	}
 	
+	@Override
+	public void onStop() {
+		db.close();
+		super.onStop();
+	}
+	
+	@Override
+	public void onPause() {
+		db.close();
+		super.onPause();
+	}
+	
+	@Override
+	public void onResume() {
+		MessagesTable table = new MessagesTable(getActivity());
+		db = table.getWritableDatabase();
+		super.onResume();
+	}
+	
 	public void sendMessage(){
 		
 		EditText messBox = (EditText)rootView.findViewById(R.id.messageText);

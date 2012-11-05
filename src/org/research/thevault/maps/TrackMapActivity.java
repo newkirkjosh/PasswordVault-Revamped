@@ -27,6 +27,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -284,6 +285,7 @@ public class TrackMapActivity extends MapActivity {
 						text += line + " ";
 						line = br.readLine();
 					}
+					Log.d("JSON", text);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -19,7 +19,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.HttpConnectionParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,9 +39,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -77,6 +75,7 @@ public class BaseActivity extends Activity implements Constants{
 			setContentView(R.layout.base_layout_hdmi);
 		else
 			setContentView(R.layout.base_layout);
+		Log.d("ROOTED", "");
 		table = new MessagesTable(BaseActivity.this);
 		db = table.getWritableDatabase();
 		
@@ -349,10 +348,14 @@ public class BaseActivity extends Activity implements Constants{
 	     }
 	 }
 	
-	private String formatTime(String str){
+	private String formatTime(Calendar cal){
 		String pattern = "MM/dd hh:mm";
 	    SimpleDateFormat format = new SimpleDateFormat(pattern);
-	    String date =  format.format(new Date(Long.valueOf(str)));
+	    int hour = (cal.get(Calendar.HOUR_OF_DAY) % 12);
+	    String ampm = "am";
+	    if(cal.get(Calendar.HOUR_OF_DAY)+1 > 12)
+	    	ampm = "pm";
+	    String date = (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.DAY_OF_MONTH) + " " + hour + ":" + cal.get(Calendar.MINUTE) + ampm;
 	    return date;
 	}
 	
@@ -380,10 +383,15 @@ public class BaseActivity extends Activity implements Constants{
 		for (int i = 0; i < memArray.length; i++) {
 			Cursor convoCursor = db.rawQuery("Select * from " + MESSAGE_TABLE_NAME + " where " + OTHER_MEMBER + "='" + memArray[i] + "' order by " + TIMESTAMP + " DESC", null);
 			if(convoCursor.moveToFirst()){
+				long thou = 1000;
+				
+				Calendar cal = Calendar.getInstance();
+				cal.setTimeInMillis(convoCursor.getLong(convoCursor.getColumnIndex(TIMESTAMP)) * thou);
+				
 				HashMap<String, String> map = new HashMap<String, String>();
 	   	        map.put( "name", convoCursor.getString(convoCursor.getColumnIndex(OTHER_MEMBER)) );
 	   	        map.put( "message", convoCursor.getString(convoCursor.getColumnIndex(MESSAGE)) );
-	   	        map.put( "time", formatTime(convoCursor.getString(convoCursor.getColumnIndex(TIMESTAMP))) );
+	   	        map.put( "time", formatTime(cal) );
 				convos.add(map);
 			}
 		}
