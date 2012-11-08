@@ -164,7 +164,7 @@ public class BaseActivity extends Activity implements Constants{
 		values.put(RECIPIENT, recipient);
 		values.put(OTHER_MEMBER, recipient);
 		values.put(MESSAGE, message);
-		values.put(TIMESTAMP, ""+time);
+		values.put(TIMESTAMP, time);
 		db.insert(MESSAGE_TABLE_NAME, null, values);
 	}
 	
@@ -308,7 +308,6 @@ public class BaseActivity extends Activity implements Constants{
 							    		nameValuePairs.add(new BasicNameValuePair("recipient", obj.getString(SENDER)));
 							    		nameValuePairs.add(new BasicNameValuePair("sender", recipient));
 							    		nameValuePairs.add(new BasicNameValuePair("message", response));
-							    		nameValuePairs.add(new BasicNameValuePair("time", "" + System.currentTimeMillis()));
 							    		
 							    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 									    
@@ -348,17 +347,6 @@ public class BaseActivity extends Activity implements Constants{
 	     }
 	 }
 	
-	private String formatTime(Calendar cal){
-		String pattern = "MM/dd hh:mm";
-	    SimpleDateFormat format = new SimpleDateFormat(pattern);
-	    int hour = (cal.get(Calendar.HOUR_OF_DAY) % 12);
-	    String ampm = "am";
-	    if(cal.get(Calendar.HOUR_OF_DAY)+1 > 12)
-	    	ampm = "pm";
-	    String date = (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.DAY_OF_MONTH) + " " + hour + ":" + cal.get(Calendar.MINUTE) + ampm;
-	    return date;
-	}
-	
 	public void deleteConvo(String name){
 		db.delete(MESSAGE_TABLE_NAME, OTHER_MEMBER + "=?", new String[] {name});
 		loadList();
@@ -381,17 +369,12 @@ public class BaseActivity extends Activity implements Constants{
 		memArray = members.toArray(new String[0]);
 		final ArrayList<HashMap<String,String>> convos = new ArrayList<HashMap<String,String>>();
 		for (int i = 0; i < memArray.length; i++) {
-			Cursor convoCursor = db.rawQuery("Select * from " + MESSAGE_TABLE_NAME + " where " + OTHER_MEMBER + "='" + memArray[i] + "' order by " + TIMESTAMP + " DESC", null);
+			Cursor convoCursor = db.rawQuery("Select * from " + MESSAGE_TABLE_NAME + " where " + OTHER_MEMBER + "='" + memArray[i] + "' order by " + _ID + " DESC", null);
 			if(convoCursor.moveToFirst()){
-				long thou = 1000;
-				
-				Calendar cal = Calendar.getInstance();
-				cal.setTimeInMillis(convoCursor.getLong(convoCursor.getColumnIndex(TIMESTAMP)) * thou);
-				
 				HashMap<String, String> map = new HashMap<String, String>();
-	   	        map.put( "name", convoCursor.getString(convoCursor.getColumnIndex(OTHER_MEMBER)) );
-	   	        map.put( "message", convoCursor.getString(convoCursor.getColumnIndex(MESSAGE)) );
-	   	        map.put( "time", formatTime(cal) );
+	   	        map.put("name", convoCursor.getString(convoCursor.getColumnIndex(OTHER_MEMBER)));
+	   	        map.put("message", convoCursor.getString(convoCursor.getColumnIndex(MESSAGE)));
+	   	        map.put("time", convoCursor.getString(convoCursor.getColumnIndex(TIMESTAMP)));
 				convos.add(map);
 			}
 		}

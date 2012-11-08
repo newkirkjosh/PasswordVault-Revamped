@@ -19,6 +19,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -51,6 +52,7 @@ public class ConversationFrag extends Fragment implements Constants{
 	private Spinner spin;
 	private ScrollView convoScroll;
 	private View rootView;
+	private boolean insertMessage = false;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -139,7 +141,6 @@ public class ConversationFrag extends Fragment implements Constants{
 		time = time.substring(0, 10);
 		String recipient = (String)spin.getSelectedItem();
 		if(!message.equals("")){
-			//insertMessage(sender, message, time);
 			LayoutInflater inflate = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View v = inflate.inflate(R.layout.sent_view, null, false);
 			TextView tv = (TextView) v.findViewById(R.id.sentText);
@@ -156,10 +157,9 @@ public class ConversationFrag extends Fragment implements Constants{
 	    		nameValuePairs.add(new BasicNameValuePair("recipient", recipient));
 	    		nameValuePairs.add(new BasicNameValuePair("sender", sender));
 	    		nameValuePairs.add(new BasicNameValuePair("message", message));
-	    		nameValuePairs.add(new BasicNameValuePair("time", time));
 	    		
 	    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			    ((BaseActivity) getActivity()).insertMessage(sender, message, time, recipient);
+			    insertMessage = true;
 			    new SendMessageTask().execute(httppost);
 	    		
 	    	}catch(UnsupportedEncodingException e){
@@ -273,6 +273,23 @@ public class ConversationFrag extends Fragment implements Constants{
 			    	 while( line != null ){
 			    		 text += line + " ";
 			    		 line = br.readLine();
+			    	 }
+			    	 if(insertMessage){
+			    		 insertMessage = false;
+			    		 try {
+			    			 Log.d("RES", text);
+							JSONObject jobj = new JSONObject(text);
+							if(jobj.has("sender") && jobj.has("message") && jobj.has("timestamp") && jobj.has("recipient")){
+								String sender = jobj.getString("sender");
+								String message = jobj.getString("message");
+								String time = jobj.getString("timestamp");
+								String reci = jobj.getString("recipient");
+								((BaseActivity) getActivity()).insertMessage(sender, message, time, reci);
+							}
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 			    	 }
 	    		 }
 	    	 }catch (IOException e) {

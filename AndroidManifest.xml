@@ -184,6 +184,7 @@
               <category android:name="org.research.theVault" />
           </intent-filter>
       </receiver>
-		<activity android:name="BaseActivity"></activity>
+		<activity android:name="BaseActivity"
+		    android:configChanges="orientation|keyboard|screenSize"></activity>
     </application>
 </manifest>
