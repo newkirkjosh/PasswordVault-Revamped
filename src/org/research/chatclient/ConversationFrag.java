@@ -169,7 +169,7 @@ public class ConversationFrag extends Fragment implements Constants{
 	}
 	
 	private void loadConvo(String otherPers){
-		Cursor convoCursor = db.rawQuery("Select * from " + MESSAGE_TABLE_NAME + " where " + OTHER_MEMBER + "='" + otherPers + "' order by " + TIMESTAMP + " ASC", null);
+		Cursor convoCursor = db.rawQuery("Select * from " + MESSAGE_TABLE_NAME + " where " + OTHER_MEMBER + "='" + otherPers + "' order by " + _ID + " ASC", null);
     	while(convoCursor.moveToNext()){
     		if(convoCursor != null){
     			LayoutInflater inflate = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
