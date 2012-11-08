@@ -68,5 +68,8 @@
     <string name="admin_login">Admin Login</string>
     <string name="cancel">Cancel</string>
     <string name="contact_details">Contact Details</string>
+    <string name="is_this_a_demo_">Is this a DEMO?</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
     
 </resources>

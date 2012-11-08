@@ -7,12 +7,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 
 public class C2DMReceiver extends BroadcastReceiver{
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		if (intent.getAction().equals("com.google.android.c2dm.intent.REGISTRATION")) {
+			Log.d("REG", "REG");
 	        handleRegistration(context, intent);
 	    } else if (intent.getAction().equals("com.google.android.c2dm.intent.RECEIVE")) {
 	        handleMessage(context, intent);
