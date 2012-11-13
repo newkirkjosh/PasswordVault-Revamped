@@ -22,7 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 
-public class InboxActivity extends Fragment implements Constants{
+public class InboxActivity extends Fragment{
 	
 	private ListView lv;
 	private SharedPreferences mPrefs;

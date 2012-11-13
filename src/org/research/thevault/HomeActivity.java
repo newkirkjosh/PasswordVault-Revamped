@@ -29,12 +29,9 @@ public class HomeActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		if(!getResources().getBoolean(R.bool.IsTablet) && BaseActivity.HDMI_ACTIVE)
-			setContentView(R.layout.home_layout_hdmi);
-		else
-			setContentView(R.layout.home_layout);
+		setContentView(R.layout.home_layout);
 
-		if (getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE) {
+		if (getResources().getBoolean(R.bool.IsTablet)) {
 			FragmentManager fm = getFragmentManager();
 			Fragment listFrag = new SitesList();
 			FragmentTransaction ft = fm.beginTransaction();
@@ -51,7 +48,7 @@ public class HomeActivity extends Activity {
 
 	public void startRightFrag(Bundle site) {
 		mWebOpen = true;
-		if (getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE) {
+		if (getResources().getBoolean(R.bool.IsTablet)) {
 			FragmentManager fm = getFragmentManager();
 			mSiteFrag = new Details();
 			mSiteFrag.setArguments(site);
@@ -85,7 +82,7 @@ public class HomeActivity extends Activity {
 			mSiteFrag = new AddPage();
 			// mSiteFrag.setArguments(site);
 
-			if (getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE) {
+			if (getResources().getBoolean(R.bool.IsTablet)) {
 				ft = fm.beginTransaction();
 				ft.replace(R.id.right_frag, mSiteFrag).commit();
 				ab.setDisplayHomeAsUpEnabled(true);
@@ -97,7 +94,7 @@ public class HomeActivity extends Activity {
 		case R.id.gen_pwd:
 			mSiteFrag = new GeneratePass();
 			// mSiteFrag.setArguments(site);
-			if (getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE) {
+			if (getResources().getBoolean(R.bool.IsTablet)) {
 				ft = fm.beginTransaction();
 				ft.replace(R.id.right_frag, mSiteFrag).commit();
 				ab.setDisplayHomeAsUpEnabled(true);

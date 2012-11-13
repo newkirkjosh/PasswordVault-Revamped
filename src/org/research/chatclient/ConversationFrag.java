@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.apache.http.HttpEntity;
@@ -20,13 +22,13 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.research.thevault.Constants;
+import org.research.thevault.PVDatamanager;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,7 +47,7 @@ import android.widget.Toast;
 
 public class ConversationFrag extends Fragment implements Constants{
 	
-	private SQLiteDatabase db;
+	private PVDatamanager pvm;
 	private ProgressDialog mProgress;
 	private SharedPreferences mPrefs;
 	private JSONArray mUsers;
@@ -58,8 +60,7 @@ public class ConversationFrag extends Fragment implements Constants{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		rootView = inflater.inflate(R.layout.conversation, container, false);
-		MessagesTable table = new MessagesTable(getActivity());
-		db = table.getWritableDatabase();
+		pvm = PVDatamanager.getInstance();
 		spin = (Spinner)rootView.findViewById(R.id.personSpin);
 		convoScroll = (ScrollView)rootView.findViewById(R.id.convoScroll);
 		convoScroll.postDelayed(new Runnable() {
@@ -69,7 +70,7 @@ public class ConversationFrag extends Fragment implements Constants{
 			}
 		}, 500);
 		String convo;
-		if(!getResources().getBoolean(R.bool.IsTablet) && !BaseActivity.HDMI_ACTIVE)
+		if(!getResources().getBoolean(R.bool.IsTablet))
 			convo = ((ConversationActivity) getActivity()).getConvo();
 		else
 			convo = ((BaseActivity) getActivity()).getConvo();
@@ -104,31 +105,6 @@ public class ConversationFrag extends Fragment implements Constants{
 			}
 		});
 		return rootView;
-	}
-	
-	@Override
-	public void onDestroy() {
-		db.close();
-		super.onDestroy();
-	}
-	
-	@Override
-	public void onStop() {
-		db.close();
-		super.onStop();
-	}
-	
-	@Override
-	public void onPause() {
-		db.close();
-		super.onPause();
-	}
-	
-	@Override
-	public void onResume() {
-		MessagesTable table = new MessagesTable(getActivity());
-		db = table.getWritableDatabase();
-		super.onResume();
 	}
 	
 	public void sendMessage(){
@@ -169,26 +145,25 @@ public class ConversationFrag extends Fragment implements Constants{
 	}
 	
 	private void loadConvo(String otherPers){
-		Cursor convoCursor = db.rawQuery("Select * from " + MESSAGE_TABLE_NAME + " where " + OTHER_MEMBER + "='" + otherPers + "' order by " + _ID + " ASC", null);
-    	while(convoCursor.moveToNext()){
-    		if(convoCursor != null){
-    			LayoutInflater inflate = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    			View v = null;
-    			if(convoCursor.getString(convoCursor.getColumnIndex(RECIPIENT)).equals(convoCursor.getString(convoCursor.getColumnIndex(OTHER_MEMBER)))){
-    				v = inflate.inflate(R.layout.sent_view, null, false);
-    				TextView tv = (TextView) v.findViewById(R.id.sentText);
-    				tv.setText(convoCursor.getString(convoCursor.getColumnIndex(MESSAGE)));
-    				LinearLayout wrapper = (LinearLayout)rootView.findViewById(R.id.convoLay);
-    				wrapper.addView(v);
-    			}
-    			if(convoCursor.getString(convoCursor.getColumnIndex(SENDER)).equals(convoCursor.getString(convoCursor.getColumnIndex(OTHER_MEMBER)))){
-    				v = inflate.inflate(R.layout.received_view, null, false);
-    				TextView tv = (TextView) v.findViewById(R.id.receivedText);
-    				tv.setText(convoCursor.getString(convoCursor.getColumnIndex(MESSAGE)));
-    				LinearLayout wrapper = (LinearLayout)rootView.findViewById(R.id.convoLay);
-    				wrapper.addView(v);
-    			}
-    		}
+		ArrayList<HashMap<String, String>> convo = pvm.getConversation(getActivity(), otherPers);
+		LayoutInflater inflate = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    	for(int i = 0; i < convo.size(); i++){
+			HashMap<String, String> map = convo.get(i);
+			View v = null;
+			if(map.get(RECIPIENT).equals(map.get(OTHER_MEMBER))){
+				v = inflate.inflate(R.layout.sent_view, null, false);
+				TextView tv = (TextView) v.findViewById(R.id.sentText);
+				tv.setText(map.get(MESSAGE));
+				LinearLayout wrapper = (LinearLayout)rootView.findViewById(R.id.convoLay);
+				wrapper.addView(v);
+			}
+			if(map.get(SENDER).equals(map.get(OTHER_MEMBER))){
+				v = inflate.inflate(R.layout.received_view, null, false);
+				TextView tv = (TextView) v.findViewById(R.id.receivedText);
+				tv.setText(map.get(MESSAGE));
+				LinearLayout wrapper = (LinearLayout)rootView.findViewById(R.id.convoLay);
+				wrapper.addView(v);
+			}
     	}
     	if(mProgress.isShowing())
     		mProgress.dismiss();

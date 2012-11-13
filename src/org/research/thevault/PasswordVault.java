@@ -1,7 +1,5 @@
 package org.research.thevault;
 
-import java.util.Calendar;
-
 import org.research.chatclient.R;
 
 import android.app.Activity;
@@ -9,7 +7,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -77,7 +74,7 @@ public class PasswordVault extends Activity implements OnClickListener, Constant
     }
 	
 	public void validateLogin(){
-    	PasswordTable pt = new PasswordTable( this );
+    	PasswordVaultTables pt = new PasswordVaultTables( this );
     	db = pt.getReadableDatabase();
     	cursor = null;
     	try{

@@ -1,9 +1,7 @@
 package org.research.thevault.phoneactivities;
 
-import org.research.chatclient.BaseActivity;
 import org.research.chatclient.R;
 import org.research.thevault.OptionsFragment;
-import org.research.thevault.SitesList;
 import org.research.thevault.TextFrag;
 import org.research.thevault.apps.ShowApps;
 import org.research.thevault.contacts.ShowContacts;
@@ -28,7 +26,7 @@ public class OptionsActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		if(!getResources().getBoolean(R.bool.IsTablet) && BaseActivity.HDMI_ACTIVE)
+		if(!getResources().getBoolean(R.bool.IsTablet))
 			setContentView(R.layout.home_layout_hdmi);
 		else
 			setContentView(R.layout.home_layout);
@@ -39,7 +37,7 @@ public class OptionsActivity extends Activity{
 		Fragment optionsFrag = new OptionsFragment();
 		FragmentTransaction ft = fm.beginTransaction();
 				
-		if (getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE) {
+		if (getResources().getBoolean(R.bool.IsTablet)) {
 			ft.replace(R.id.list_frag, optionsFrag).replace(R.id.right_frag, new TextFrag()).commit();
 		} else {
 			ft.replace(android.R.id.content, optionsFrag).commit();
@@ -47,7 +45,7 @@ public class OptionsActivity extends Activity{
 	}
 
 	public void startRightFrag(String option) {
-		if ((getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE) && !option.equals("Tracking")) {
+		if ((getResources().getBoolean(R.bool.IsTablet)) && !option.equals("Tracking")) {
 			Fragment frag;
 			if(option.equals("Applications")){
 				frag = new ShowApps();

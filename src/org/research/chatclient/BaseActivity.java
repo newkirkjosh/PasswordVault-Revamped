@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -22,6 +20,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.research.thevault.Constants;
+import org.research.thevault.PVDatamanager;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -35,8 +35,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -59,56 +57,19 @@ public class BaseActivity extends Activity implements Constants{
 	public static final String NOTI_ID = "NotifID";
 	public static final String CONVO = "convo";
 	public static final String CONVO_USER = "convo_user";
+	
+	private PVDatamanager pvm;
 	private SharedPreferences mPrefs;
-	private SQLiteDatabase db;
-	MessagesTable table;
 	private ListView lv;
 	private ProgressDialog mProgress;
 	private String convo;
-	public static boolean HDMI_ACTIVE = true;
 	private boolean needRefresh = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(!getResources().getBoolean(R.bool.IsTablet) && HDMI_ACTIVE)
-			setContentView(R.layout.base_layout_hdmi);
-		else
-			setContentView(R.layout.base_layout);
-		Log.d("ROOTED", "");
-		table = new MessagesTable(BaseActivity.this);
-		db = table.getWritableDatabase();
-		
-		Button btn = (Button)findViewById(R.id.createMessage);
-		btn.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View arg0) {
-				if (getResources().getBoolean(R.bool.IsTablet) || HDMI_ACTIVE) {
-					convo = null;
-					FragmentManager fm = getFragmentManager();
-					Fragment convoFrag = new ConversationFrag();
-					FragmentTransaction ft = fm.beginTransaction();
-					ft.replace(R.id.convo_frag, convoFrag).commit();
-				} else {
-					Intent intent = new Intent(BaseActivity.this, ConversationActivity.class);
-					startActivity(intent);
-				}
-			}
-		});
-		
+		pvm = PVDatamanager.getInstance();
 		mPrefs = getSharedPreferences( CreateAccountActivity.PREFS, Context.MODE_PRIVATE );
-		
-		FragmentManager fm = getFragmentManager();
-		Fragment inboxFrag = new InboxActivity();
-		FragmentTransaction ft = fm.beginTransaction();
-		ft.replace(R.id.inbox_frag, inboxFrag).commit();
-		
-		mProgress = new ProgressDialog(this);
-	    mProgress.setIndeterminate(true);
-	    mProgress.setCancelable(true);
-	    mProgress.setMessage("Downloading...");
-	    
 	}
 	
 	
@@ -165,21 +126,44 @@ public class BaseActivity extends Activity implements Constants{
 		values.put(OTHER_MEMBER, recipient);
 		values.put(MESSAGE, message);
 		values.put(TIMESTAMP, time);
-		db.insert(MESSAGE_TABLE_NAME, null, values);
-	}
-	
-	@Override
-	public void onBackPressed() {
-		if(db != null && db.isOpen())
-			db.close();
-		super.onBackPressed();
+		pvm.insertMessage(this, values);
 	}
 	
 	public void onResume(){
 		super.onResume();
-		
-		db = table.getWritableDatabase();
-		
+		if(!(this instanceof ConversationActivity)){
+			setContentView(R.layout.base_layout);
+			Log.d("ROOTED", "");
+			
+			Button btn = (Button)findViewById(R.id.createMessage);
+			btn.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					if (getResources().getBoolean(R.bool.IsTablet)) {
+						convo = null;
+						FragmentManager fm = getFragmentManager();
+						Fragment convoFrag = new ConversationFrag();
+						FragmentTransaction ft = fm.beginTransaction();
+						ft.replace(R.id.convo_frag, convoFrag).commit();
+					} else {
+						Log.d("TEST", "WWWWTTTTTTFFFFFF");
+						Intent intent = new Intent(BaseActivity.this, ConversationActivity.class);
+						startActivity(intent);
+					}
+				}
+			});
+			
+			FragmentManager fm = getFragmentManager();
+			Fragment inboxFrag = new InboxActivity();
+			FragmentTransaction ft = fm.beginTransaction();
+			ft.replace(R.id.inbox_frag, inboxFrag).commit();
+			
+			mProgress = new ProgressDialog(this);
+		    mProgress.setIndeterminate(true);
+		    mProgress.setCancelable(true);
+		    mProgress.setMessage("Downloading...");
+		}
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_ACTION);
 		registerReceiver(receiver, filter);
@@ -188,17 +172,11 @@ public class BaseActivity extends Activity implements Constants{
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
-		if(db != null && db.isOpen())
-			db.close();
-		
 		this.unregisterReceiver(receiver);
 	}
 	
 	@Override
 	protected void onDestroy() {
-		if(db != null && db.isOpen())
-			db.close();
 		super.onDestroy();
 	}
 	
@@ -206,8 +184,6 @@ public class BaseActivity extends Activity implements Constants{
 		
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			MessagesTable table = new MessagesTable(context);
-			db = table.getWritableDatabase();
 			try{
 	    		HttpPost httppost = new HttpPost("http://devimiiphone1.nku.edu/research_chat_client/chat_client_server/get_messages.php");
 	    		LinkedList<NameValuePair> nameValuePairs = new LinkedList<NameValuePair>();
@@ -221,7 +197,8 @@ public class BaseActivity extends Activity implements Constants{
 	    		
 	    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-			    mProgress.show();
+	    		if(mProgress != null)
+	    			mProgress.show();
 	    		
 			    new DownloadMessages().execute(httppost);
 			}catch(UnsupportedEncodingException e){
@@ -335,20 +312,22 @@ public class BaseActivity extends Activity implements Constants{
 					else
 						values.put(MESSAGE, obj.getString(MESSAGE));
 					values.put(TIMESTAMP, obj.getString(TIMESTAMP));
-					db.insert(MESSAGE_TABLE_NAME, null, values);
-					loadList();
+					pvm.insertMessage(BaseActivity.this, values);
+					if(!(BaseActivity.this instanceof ConversationActivity))
+						loadList();
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if(mProgress.isShowing())
+			if(mProgress != null && mProgress.isShowing())
 				mProgress.dismiss();
 	     }
 	 }
 	
 	public void deleteConvo(String name){
-		db.delete(MESSAGE_TABLE_NAME, OTHER_MEMBER + "=?", new String[] {name});
+		pvm.deleteConvo(this, name);
+		convo = null;
 		loadList();
 	}
 	
@@ -357,48 +336,34 @@ public class BaseActivity extends Activity implements Constants{
 	}
 	
 	public void loadList(){
-		Cursor idCursor = db.rawQuery("Select distinct " + OTHER_MEMBER + " from " + MESSAGE_TABLE_NAME, null);
-		ArrayList<String> members = new ArrayList<String>();
-		while(idCursor.moveToNext()){
-			if(idCursor != null){
-				members.add(idCursor.getString(idCursor.getColumnIndex(OTHER_MEMBER)));
-			}
-		}
-		idCursor.close();
-		String[] memArray;
-		memArray = members.toArray(new String[0]);
+		String[] list = pvm.getConvos(this);
 		final ArrayList<HashMap<String,String>> convos = new ArrayList<HashMap<String,String>>();
-		for (int i = 0; i < memArray.length; i++) {
-			Cursor convoCursor = db.rawQuery("Select * from " + MESSAGE_TABLE_NAME + " where " + OTHER_MEMBER + "='" + memArray[i] + "' order by " + _ID + " DESC", null);
-			if(convoCursor.moveToFirst()){
-				HashMap<String, String> map = new HashMap<String, String>();
-	   	        map.put("name", convoCursor.getString(convoCursor.getColumnIndex(OTHER_MEMBER)));
-	   	        map.put("message", convoCursor.getString(convoCursor.getColumnIndex(MESSAGE)));
-	   	        map.put("time", convoCursor.getString(convoCursor.getColumnIndex(TIMESTAMP)));
-				convos.add(map);
-			}
+		for (int i = 0; i < list.length; i++) {
+			convos.add(pvm.getLastMessage(this, list[i]));
 		}
-		lv.setAdapter(new SimpleAdapter(this, convos, R.layout.list_item, new String[] {"name", "message", "time"}, new int[] { R.id.from_text, R.id.message_text, R.id.date_text}));
-		lv.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				convo = convos.get(position).get("name");
-				if (getResources().getBoolean(R.bool.IsTablet) || HDMI_ACTIVE) {
-					FragmentManager fm = getFragmentManager();
-					Fragment convoFrag = new ConversationFrag();
-					FragmentTransaction ft = fm.beginTransaction();
-					ft.replace(R.id.convo_frag, convoFrag).commit();
-				} else {
-					Intent intent = new Intent(BaseActivity.this, ConversationActivity.class);
-					intent.putExtra(CONVO, convo);
-					startActivity(intent);
+		if(!(BaseActivity.this instanceof ConversationActivity)){
+			lv.setAdapter(new SimpleAdapter(this, convos, R.layout.list_item, new String[] {"name", "message", "time"}, new int[] { R.id.from_text, R.id.message_text, R.id.date_text}));
+			lv.setOnItemClickListener(new OnItemClickListener() {
+	
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					convo = convos.get(position).get("name");
+					if (getResources().getBoolean(R.bool.IsTablet)) {
+						FragmentManager fm = getFragmentManager();
+						Fragment convoFrag = new ConversationFrag();
+						FragmentTransaction ft = fm.beginTransaction();
+						ft.replace(R.id.convo_frag, convoFrag).commit();
+					} else {
+						Intent intent = new Intent(BaseActivity.this, ConversationActivity.class);
+						intent.putExtra(CONVO, convo);
+						startActivity(intent);
+					}
 				}
-			}
-		});
+			});
+		}
 		if(needRefresh){
 			needRefresh = false;
-			if (getResources().getBoolean(R.bool.IsTablet) || HDMI_ACTIVE) {
+			if (getResources().getBoolean(R.bool.IsTablet)) {
 				FragmentManager fm = getFragmentManager();
 				Fragment convoFrag = new ConversationFrag();
 				FragmentTransaction ft = fm.beginTransaction();

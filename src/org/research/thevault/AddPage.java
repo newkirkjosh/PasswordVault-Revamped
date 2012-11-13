@@ -31,7 +31,6 @@ import android.widget.EditText;
 
 public class AddPage extends MyFragment implements Constants{
 
-	private SiteTable st;
 	EditText site;
 	EditText name;
 	EditText pass;
@@ -48,7 +47,6 @@ public class AddPage extends MyFragment implements Constants{
 		super.onCreate( savedInstanceState ); 
 		View v = inflater.inflate(R.layout.add_page, container, false);
 
-		st = new SiteTable( getActivity() );
 		site = (EditText) v.findViewById( R.id.url_text );
 		name = (EditText) v.findViewById( R.id.url_username );
 		pass = (EditText) v.findViewById( R.id.url_password );
@@ -106,7 +104,7 @@ public class AddPage extends MyFragment implements Constants{
 
 		if( !siteStr.equals( "" ) && !nameStr.equals( "" ) && !passStr.equals( "" ) ){
 			addSite( siteStr, nameStr, passStr );
-			if(getResources().getBoolean(R.bool.IsTablet) || BaseActivity.HDMI_ACTIVE){
+			if(getResources().getBoolean(R.bool.IsTablet)){
 				getActivity().getFragmentManager().beginTransaction().remove(this).commit();
 				((SitesList)getActivity().getFragmentManager().findFragmentById(R.id.list_frag)).refreshList();
 			}
@@ -121,13 +119,12 @@ public class AddPage extends MyFragment implements Constants{
 	 }
 
 	 public void addSite( String siteStr, String nameStr, String passStr ){
-		SQLiteDatabase db = st.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put( URL, siteStr );
 		values.put( UNAME, nameStr );
 		values.put( PWORD, passStr);
-		db.insert( SITE_TABLE_NAME, null, values );
-		db.close();
+		PVDatamanager pvm = PVDatamanager.getInstance();
+		pvm.insertSite(getActivity(), values);
 	 }
 
 	@Override
