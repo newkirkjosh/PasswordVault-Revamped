@@ -131,6 +131,10 @@ public class BaseActivity extends Activity implements Constants{
 	
 	public void onResume(){
 		super.onResume();
+		mProgress = new ProgressDialog(this);
+	    mProgress.setIndeterminate(true);
+	    mProgress.setCancelable(true);
+	    mProgress.setMessage("Downloading...");
 		if(!(this instanceof ConversationActivity)){
 			setContentView(R.layout.base_layout);
 			Log.d("ROOTED", "");
@@ -158,11 +162,6 @@ public class BaseActivity extends Activity implements Constants{
 			Fragment inboxFrag = new InboxActivity();
 			FragmentTransaction ft = fm.beginTransaction();
 			ft.replace(R.id.inbox_frag, inboxFrag).commit();
-			
-			mProgress = new ProgressDialog(this);
-		    mProgress.setIndeterminate(true);
-		    mProgress.setCancelable(true);
-		    mProgress.setMessage("Downloading...");
 		}
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_ACTION);
@@ -212,7 +211,8 @@ public class BaseActivity extends Activity implements Constants{
 	}
 	
 	public void downloadMessages(HttpPost httppost){
-	    mProgress.show();
+		if(mProgress != null)
+			mProgress.show();
 	    new DownloadMessages().execute(httppost);
 	}
 	
